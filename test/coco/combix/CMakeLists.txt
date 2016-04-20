@@ -9,3 +9,9 @@ add_test(NAME primitives_test COMMAND $<TARGET_FILE:primitives_test>)
 target_link_libraries(primitives_test
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
   )
+
+add_executable(combinators_test combinators_test.cpp)
+add_test(NAME combinators_test COMMAND $<TARGET_FILE:combinators_test>)
+target_link_libraries(combinators_test
+  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  )
