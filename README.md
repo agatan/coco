@@ -6,7 +6,7 @@ This is my utility library on C++.
 ### expected
 
 `coco::expected` is a type that represents an errorable value.  
-It has a valur or an error.
+It has a value or an error.
 
 ```c++
 #include <coco/expected.hpp>
