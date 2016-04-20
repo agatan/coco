@@ -75,7 +75,7 @@ namespace coco {
       return value.which() == 1;
     }
 
-    bool is_err() const noexcept {
+    bool is_error() const noexcept {
       return value.which() == 0;
     }
 
@@ -85,43 +85,43 @@ namespace coco {
 
 
     // extraction
-    boost::optional<T const&> get() const noexcept {
+    boost::optional<T const&> ok() const noexcept {
       if (is_ok()) {
         return boost::get<T const&>(value);
       }
       return boost::none;
     }
-    boost::optional<T&> get() noexcept {
+    boost::optional<T&> ok() noexcept {
       if (is_ok()) {
         return boost::get<T&>(value);
       }
       return boost::none;
     }
 
-    T const& get_exn() const {
+    T const& unwrap() const {
       return boost::get<T const&>(value);
     }
-    T& get_exn() {
+    T& unwrap() {
       return boost::get<T&>(value);
     }
 
-    boost::optional<E const&> get_err() const noexcept {
-      if (is_err()) {
+    boost::optional<E const&> error() const noexcept {
+      if (is_error()) {
         return boost::get<detail::error_holder<E> const&>(value).error;
       }
       return boost::none;
     }
-    boost::optional<E&> get_err() noexcept {
-      if (is_err()) {
+    boost::optional<E&> error() noexcept {
+      if (is_error()) {
         return boost::get<detail::error_holder<E>&>(value).error;
       }
       return boost::none;
     }
 
-    E const& get_err_exn() const {
+    E const& unwrap_error() const {
       return boost::get<detail::error_holder<E> const&>(value).error;
     }
-    E& get_err_exn() {
+    E& unwrap_error() {
       return boost::get<detail::error_holder<E>&>(value).error;
     }
 
@@ -137,44 +137,44 @@ namespace coco {
 
     template <typename F>
     typename std::result_of<F(T)>::type
-    and_then(F&& f) const &&;
+    flat_map(F&& f) const &&;
 
     template <typename E2>
     expected<T, E2> or_(expected<T, E2> const& e) const {
       if (is_ok()) {
-        return get_exn();
+        return unwrap();
       }
       return e;
     }
     template <typename E2>
     expected<T, E2> or_(expected<T, E2> && e) const {
       if (is_ok()) {
-        return get_exn();
+        return unwrap();
       }
       return e;
     }
 
-    T const& get_or_else(T const& v) const & {
+    T const& unwrap_or(T const& v) const & {
       if (is_ok()) {
-        return get_exn();
+        return unwrap();
       }
       return v;
     }
-    T get_or_else(T&& v) const & {
+    T unwrap_or(T&& v) const & {
       if (is_ok()) {
-        return get_exn();
+        return unwrap();
       }
       return v;
     }
-    T get_or_else(T const& v) && {
+    T unwrap_or(T const& v) && {
       if (is_ok()) {
-        return std::move(get_exn());
+        return std::move(unwrap());
       }
       return v;
     }
-    T get_or_else(T&& v) && {
+    T unwrap_or(T&& v) && {
       if (is_ok()) {
-        return std::move(get_exn());
+        return std::move(unwrap());
       }
       return v;
     }
@@ -190,30 +190,30 @@ namespace coco {
   template <typename F>
   expected<typename std::result_of<F(T)>::type, E>
   expected<T, E>::map(F&& f) const && {
-    if (auto v = get()) {
+    if (auto v = ok()) {
       return f(std::move(*v));
     }
-    return get_err_exn();
+    return unwrap_error();
   }
 
   template <typename T, typename E>
   template <typename F>
   expected<T, typename std::result_of<F(E)>::type>
   expected<T, E>::map_err(F&& f) const && {
-    if (auto e = get_err()) {
+    if (auto e = error()) {
       return f(std::move(*e));
     }
-    return get_exn();
+    return unwrap();
   }
 
   template <typename T, typename E>
   template <typename F>
   typename std::result_of<F(T)>::type
-  expected<T, E>::and_then(F&& f) const && {
-    if (auto e = get_err()) {
+  expected<T, E>::flat_map(F&& f) const && {
+    if (auto e = error()) {
       return *e;
     }
-    return f(get_exn());
+    return f(unwrap());
   }
 
 } // namespace coco
