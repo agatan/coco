@@ -116,4 +116,27 @@ BOOST_AUTO_TEST_CASE(unwrap_or) {
   BOOST_TEST(e2.unwrap_or(2) == 2);
 }
 
+BOOST_AUTO_TEST_CASE(operator_bitor) {
+  auto const e1 = coco::expected<int, std::string>{0};
+  auto const e2 = coco::expected<int, std::string>{"error"};
+  auto const e3 = coco::expected<int, double>{coco::make_error(0.5)};
+
+  BOOST_TEST((e1 | e2).unwrap() == 0);
+  BOOST_TEST((e2 | e3).unwrap_error() == 0.5);
+  BOOST_TEST((e2 | e1 | e3).unwrap() == 0);
+}
+
+BOOST_AUTO_TEST_CASE(operator_flat_map) {
+  auto div = [](auto v) {
+    if (v == 0) {
+      return coco::expected<int, std::string>("zero division");
+    }
+    return coco::expected<int, std::string>{v / 2};
+  };
+  auto const e = coco::expected<int, std::string>{4} >> div >> div;
+  BOOST_TEST(e.unwrap() == 1);
+
+  BOOST_TEST((std::move(e) >> div >> div).unwrap_error() == "zero division");
+}
+
 BOOST_AUTO_TEST_SUITE_END()

@@ -139,6 +139,10 @@ namespace coco {
     typename std::result_of<F(T)>::type
     flat_map(F&& f) const &&;
 
+    template <typename F>
+    typename std::result_of<F(T)>::type
+    flat_map(F&& f) const&;
+
     template <typename E2>
     expected<T, E2> or_(expected<T, E2> const& e) const {
       if (is_ok()) {
@@ -179,6 +183,8 @@ namespace coco {
       return v;
     }
 
+    // operators
+
   private:
     using value_type = boost::variant<detail::error_holder<E>, T>;
     value_type value;
@@ -214,6 +220,28 @@ namespace coco {
       return *e;
     }
     return f(unwrap());
+  }
+
+  template <typename T, typename E>
+  template <typename F>
+  typename std::result_of<F(T)>::type
+  expected<T, E>::flat_map(F&& f) const& {
+    if (auto e = error()) {
+      return *e;
+    }
+    return f(unwrap());
+  }
+
+  // operators
+  template <typename T, typename E, typename E2>
+  expected<T, E2> operator|(expected<T, E> const& lhs, expected<T, E2> const& rhs) {
+    return lhs.or_(rhs);
+  }
+
+  template <typename T, typename E, typename F>
+  typename std::result_of<F(T)>::type
+  operator >>(expected<T, E> const& e, F&& f) {
+    return std::move(e).flat_map(std::forward<F>(f));
   }
 
 } // namespace coco
