@@ -139,4 +139,11 @@ BOOST_AUTO_TEST_CASE(operator_flat_map) {
   BOOST_TEST((std::move(e) >> div >> div).unwrap_error() == "zero division");
 }
 
+BOOST_AUTO_TEST_CASE(operator_star) {
+  auto e = coco::expected<int, std::string>{0};
+  BOOST_TEST(*e == 0);
+  *e = 1;
+  BOOST_TEST(*e == 1);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

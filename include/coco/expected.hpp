@@ -184,6 +184,12 @@ namespace coco {
     }
 
     // operators
+    T& operator*() {
+      return unwrap();
+    }
+    T const& operator*() const {
+      return unwrap();
+    }
 
   private:
     using value_type = boost::variant<detail::error_holder<E>, T>;
