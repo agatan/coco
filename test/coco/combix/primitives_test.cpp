@@ -16,10 +16,10 @@ BOOST_AUTO_TEST_SUITE(primitives)
     auto s = coco::combix::iter_stream(std::begin(src), std::end(src));
     auto const p = coco::combix::any();
 
-    BOOST_TEST(p.parse(s).is_ok());
-    BOOST_TEST(p.parse(s).is_ok());
-    BOOST_TEST(p.parse(s).is_ok());
-    BOOST_TEST(p.parse(s).is_ok());
+    BOOST_TEST(p.parse(s).unwrap() == 't');
+    BOOST_TEST(p.parse(s).unwrap() == 'e');
+    BOOST_TEST(p.parse(s).unwrap() == 's');
+    BOOST_TEST(p.parse(s).unwrap() == 't');
     BOOST_TEST(p.parse(s).is_error());
   }
 

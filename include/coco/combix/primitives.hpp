@@ -15,10 +15,11 @@ namespace coco {
 
     struct any_parser {
       template <typename Stream>
-      parse_result<unused, Stream> parse(Stream& s) const {
+      parse_result<typename stream_trait<Stream>::value_type, Stream>
+      parse(Stream& s) const {
         auto res = uncons(s);
         if (res) {
-          return unused{};
+          return *res;
         }
         return {res.unwrap_error()};
       }
