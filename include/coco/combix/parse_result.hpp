@@ -2,6 +2,7 @@
 #define COCO_COMBIX_PAESE_RESULT_HPP
 
 #include <coco/combix/error.hpp>
+#include <coco/combix/stream_trait.hpp>
 #include <coco/expected.hpp>
 
 namespace coco {

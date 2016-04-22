@@ -39,30 +39,50 @@ This component is under development.
 
 ```c++
 #include <coco/combix/primitives.hpp>
+#include <coco/combix/combinators.hpp>
+#include <coco/combix/iterator_stream.hpp>
 
-auto const src = std::string{"ab1"};
-auto s = coco::combix::iter_stream(std::begin(src), std::end(src));
-auto const any_p = coco::combix::any();
-auto const lower_p = coco::combix::satisfy([](auto&& c) { return 'a' <= c && c <= 'z'; });
-auto const is_a_p = coco::combix::token('a');
+#include <iostream>
+#include <iterator>
+#include <string>
 
-{
-  auto saved = coco::combix::save(s);
-  assert(any_p.parse(saved).is_ok());
+auto expression() {
+  auto number = coco::combix::map(
+      coco::combix::satisfy([](auto&& c) { return '0' <= c && c <= '9'; }),
+      [](auto&& c) { return static_cast<int>(c) - '0'; });
+
+  return number;
 }
-{
-  auto saved = coco::combix::save(s);
-  assert(lower_p.parse(saved).unwrap() == 'a');
-  assert(lower_p.parse(saved).unwrap() == 'b');
-  assert(lower_p.parse(saved).is_error());
-}
-{
-  auto saved = coco::combix::save(s);
-  assert(is_a_p.parse(saved).unwrap() == 'a');
-  assert(is_a_p.parse(saved).is_error());
+
+int main() {
+  char const src[] = "2";
+  auto s = coco::combix::iter_stream(std::begin(src), std::end(src));
+
+  auto n = expression();
+
+  std::cout << n.parse(s).unwrap() << std::endl;
 }
 ```
 
+#### primitives
+
+- `any`
+- `satisfy`
+- `token`
+
+#### combinators
+
+- `map`
+- `choice`
+- `seq`
+
+#### TODO
+
+- [ ] `lookahead`
+- [ ] `not_followed_by`
+- [ ] `many`
+- [ ] `many1`
+- [ ] `chainl`
 
 ## LICENSE
 
