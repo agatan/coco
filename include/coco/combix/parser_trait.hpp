@@ -1,6 +1,8 @@
 #ifndef COCO_COMBIX_PARSER_TRAIT_HPP_
 #define COCO_COMBIX_PARSER_TRAIT_HPP_
 
+#include <type_traits>
+
 #include <coco/combix/error.hpp>
 #include <coco/combix/parse_result.hpp>
 
@@ -10,7 +12,7 @@ namespace coco {
     template <typename P>
     struct parser_trait {
       template <typename Stream>
-      using result_type = typename P::template result_type<Stream>;
+      using result_type = typename std::decay_t<P>::template result_type<Stream>;
 
       template <typename Stream>
       static parse_result<result_type<Stream>, Stream> parse(P const& p,

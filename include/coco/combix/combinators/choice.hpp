@@ -15,7 +15,8 @@ namespace coco {
     template <typename P>
     struct choice_parser<P> {
       template <typename Stream>
-      using result_type = typename parser_trait<P>::template result_type<Stream>;
+      using result_type =
+          typename parser_trait<P>::template result_type<Stream>;
 
       choice_parser(P const& p) : p(p) {}
 

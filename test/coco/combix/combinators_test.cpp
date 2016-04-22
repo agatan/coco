@@ -35,5 +35,17 @@ BOOST_AUTO_TEST_SUITE(combinators)
     BOOST_TEST(p.parse(s).is_error());
   }
 
+  BOOST_AUTO_TEST_CASE(seq) {
+    auto src = std::string{"123"};
+    auto s = coco::combix::iter_stream(std::begin(src), std::end(src));
+    auto const digit = coco::combix::map(
+        coco::combix::satisfy([](auto&& c) { return '0' <= c && c <= '9'; }),
+        [](auto&& c) { return static_cast<int>(c) - '0'; });
+    auto const p = coco::combix::seq(digit, digit, digit);
+
+    BOOST_ASSERT(p.parse(s).unwrap() == std::make_tuple(1, 2, 3));
+    BOOST_TEST(p.parse(s).is_error());
+  }
+
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
