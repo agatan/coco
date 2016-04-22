@@ -2,6 +2,7 @@
 #define BOOST_TEST_MODULE expected
 
 #include <coco/combix/iterator_stream.hpp>
+#include <coco/combix/primitives.hpp>
 #include <coco/combix/combinators.hpp>
 
 #include <boost/test/unit_test.hpp>

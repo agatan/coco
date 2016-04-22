@@ -4,9 +4,6 @@
 #include <type_traits>
 #include <utility>
 
-#include <coco/combix/error.hpp>
-#include <coco/combix/primitives.hpp>
-#include <coco/combix/stream_trait.hpp>
 #include <coco/combix/parser_trait.hpp>
 
 namespace coco {
