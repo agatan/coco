@@ -15,7 +15,7 @@ namespace coco {
       using result_type = typename stream_trait<Stream>::value_type;
 
       template <typename Stream>
-      parse_result<result_type<Stream>, Stream> parse(Stream& s) const {
+      parse_result<result_type<Stream>, Stream> operator()(Stream& s) const {
         auto res = uncons(s);
         if (res) {
           return *res;
@@ -23,9 +23,6 @@ namespace coco {
         return {res.unwrap_error()};
       }
     };
-
-    template <>
-    struct is_parser<any_parser> : std::true_type {};
 
     any_parser any() {
       return any_parser{};
@@ -40,7 +37,7 @@ namespace coco {
       satisfy_parser(F const& f) : f(f) {}
 
       template <typename Stream>
-      parse_result<result_type<Stream>, Stream> parse(Stream& s) const {
+      parse_result<result_type<Stream>, Stream> operator()(Stream& s) const {
         auto res = peek(s);
         if (!res) {
           return {res.unwrap_error()};
@@ -59,9 +56,6 @@ namespace coco {
     };
 
     template <typename F>
-    struct is_parser<satisfy_parser<F>> : std::true_type {};
-
-    template <typename F>
     satisfy_parser<F> satisfy(F&& f) {
       return satisfy_parser<F>(std::forward<F>(f));
     }
@@ -74,7 +68,7 @@ namespace coco {
       token_parser(V v) : v(std::move(v)) {}
 
       template <typename Stream>
-      parse_result<result_type<Stream>, Stream> parse(Stream& s) const {
+      parse_result<result_type<Stream>, Stream> operator()(Stream& s) const {
         auto res = peek(s);
         if (!res) {
           return {res.unwrap_error()};
@@ -91,9 +85,6 @@ namespace coco {
     private:
       V v;
     };
-
-    template <typename V>
-    struct is_parser<token_parser<V>> : std::true_type {};
 
     template <typename V>
     token_parser<V> token(V&& v) {

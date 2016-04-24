@@ -1,9 +1,9 @@
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE expected
 
+#include <coco/combix/combinators.hpp>
 #include <coco/combix/iterator_stream.hpp>
 #include <coco/combix/primitives.hpp>
-#include <coco/combix/combinators.hpp>
 
 #include <boost/test/unit_test.hpp>
 
@@ -15,13 +15,18 @@ BOOST_AUTO_TEST_SUITE(combinators)
   BOOST_AUTO_TEST_CASE(choice) {
     auto src = std::string{"a1B"};
     auto s = coco::combix::iter_stream(std::begin(src), std::end(src));
+    auto const alpha = 
+        coco::combix::satisfy([](auto&& c) { return 'a' <= c && c <= 'z'; });
+    static_assert(coco::combix::is_parser_v<decltype(alpha), decltype(s)>, "");
+    auto const num =
+        coco::combix::satisfy([](auto&& c) { return '0' <= c && c <= '9'; });
     auto const p = coco::combix::choice(
-        coco::combix::satisfy([](auto&& c) { return 'a' <= c && c <= 'z'; }),
-        coco::combix::satisfy([](auto&& c) { return '0' <= c && c <= '9'; }));
+        alpha,
+        num);
 
-    BOOST_TEST(p.parse(s).unwrap() == 'a');
-    BOOST_TEST(p.parse(s).unwrap() == '1');
-    BOOST_TEST(p.parse(s).is_error());
+    BOOST_TEST(p(s).unwrap() == 'a');
+    BOOST_TEST(p(s).unwrap() == '1');
+    BOOST_TEST(p(s).is_error());
   }
 
   BOOST_AUTO_TEST_CASE(map) {
@@ -31,8 +36,8 @@ BOOST_AUTO_TEST_SUITE(combinators)
         coco::combix::satisfy([](auto&& c) { return '0' <= c && c <= '9'; }),
         [](auto&& c) { return static_cast<int>(c) - '0'; });
 
-    BOOST_TEST(p.parse(s).unwrap() == 1);
-    BOOST_TEST(p.parse(s).is_error());
+    BOOST_TEST(p(s).unwrap() == 1);
+    BOOST_TEST(p(s).is_error());
   }
 
   BOOST_AUTO_TEST_CASE(seq) {
@@ -43,8 +48,9 @@ BOOST_AUTO_TEST_SUITE(combinators)
         [](auto&& c) { return static_cast<int>(c) - '0'; });
     auto const p = coco::combix::seq(digit, digit, digit);
 
-    BOOST_ASSERT(p.parse(s).unwrap() == std::make_tuple(1, 2, 3));
-    BOOST_TEST(p.parse(s).is_error());
+    BOOST_ASSERT(p(s).unwrap() == std::make_tuple(1, 2, 3));
+    BOOST_TEST(std::string(s.begin(), s.end()) == "");
+    BOOST_TEST(p(s).is_error());
   }
 
 BOOST_AUTO_TEST_SUITE_END()

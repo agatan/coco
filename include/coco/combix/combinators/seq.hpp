@@ -1,8 +1,8 @@
 #ifndef COCO_COMBIX_COMBINATORS_SEQ_HPP_
 #define COCO_COMBIX_COMBINATORS_SEQ_HPP_
 
-#include <type_traits>
 #include <tuple>
+#include <type_traits>
 
 #include <coco/combix/error.hpp>
 
@@ -36,17 +36,18 @@ namespace coco {
     struct seq_parser<P> {
       template <typename Stream>
       using result_type =
-          std::tuple<typename parser_trait<P>::template result_type<Stream>>;
+          std::tuple<parse_result_of_t<std::decay_t<P>, Stream>>;
 
       seq_parser(P const& p) : p(p) {}
 
       template <typename Stream>
-      parse_result<result_type<Stream>, Stream> parse(Stream& s) const {
-        return parser_trait<P>::parse(p, s).map(
-            [](auto&& r) { return std::make_tuple(r); });
+      parse_result<result_type<Stream>, Stream> operator()(Stream& s) const {
+        static_assert(is_parser_v<std::decay_t<P>, Stream>,
+                      "template argument is not a parser");
+        return parse(p, s).map([](auto&& r) { return std::make_tuple(r); });
       }
 
-    private:
+     private:
       P p;
     };
 
@@ -55,20 +56,20 @@ namespace coco {
       using base_type = seq_parser<Tail...>;
 
       template <typename Stream>
-      using result_type = detail::tuple_add_t<
-          typename parser_trait<Head>::template result_type<Stream>,
-          typename base_type::template result_type<Stream>>;
+      using result_type =
+          detail::tuple_add_t<parse_result_of_t<std::decay_t<Head>, Stream>,
+                              parse_result_of_t<base_type, Stream>>;
 
       seq_parser(Head const& h, Tail const&... tail)
           : seq_parser<Tail...>(tail...), p(h) {}
 
       template <typename Stream>
-      parse_result<result_type<Stream>, Stream> parse(Stream& s) const {
-        auto res = parser_trait<Head>::parse(p, s);
+      parse_result<result_type<Stream>, Stream> operator()(Stream& s) const {
+        auto res = parse(p, s);
         if (!res) {
           return res.unwrap_error();
         }
-        auto tail = base_type::parse(s);
+        auto tail = base_type::operator()(s);
         if (!tail) {
           return tail.unwrap_error();
         }
@@ -78,9 +79,6 @@ namespace coco {
     private:
         Head p;
     };
-
-    template <typename... Args>
-    struct is_parser<seq_parser<Args...>> : std::true_type {};
 
     template <typename... Args>
     seq_parser<Args...> seq(Args&&... args) {

@@ -1,6 +1,8 @@
 #ifndef COCO_COMBIX_PAESE_RESULT_HPP
 #define COCO_COMBIX_PAESE_RESULT_HPP
 
+#include <type_traits>
+
 #include <coco/combix/error.hpp>
 #include <coco/combix/stream_trait.hpp>
 #include <coco/expected.hpp>
@@ -12,6 +14,11 @@ namespace coco {
     using parse_result =
         coco::expected<T, parse_error<typename stream_trait<S>::value_type>>;
 
+    template <typename>
+    struct is_parse_result : std::false_type {};
+
+    template <typename V, typename E>
+    struct is_parse_result<coco::expected<V, E>> : std::true_type {};
 
   } // namespace combix
 } // namespace coco
