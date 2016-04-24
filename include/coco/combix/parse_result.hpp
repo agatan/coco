@@ -4,7 +4,7 @@
 #include <type_traits>
 
 #include <coco/combix/error.hpp>
-#include <coco/combix/stream_trait.hpp>
+#include <coco/combix/stream_traits.hpp>
 #include <coco/expected.hpp>
 
 namespace coco {
@@ -12,7 +12,7 @@ namespace coco {
 
     template <typename T, typename S>
     using parse_result =
-        coco::expected<T, parse_error<typename stream_trait<S>::value_type>>;
+        coco::expected<T, parse_error<typename stream_traits<S>::value_type>>;
 
     template <typename>
     struct is_parse_result : std::false_type {};

@@ -4,7 +4,7 @@
 #include <iterator>
 
 #include <coco/combix/error.hpp>
-#include <coco/combix/stream_trait.hpp>
+#include <coco/combix/stream_traits.hpp>
 #include <coco/expected.hpp>
 
 namespace coco {
@@ -53,8 +53,11 @@ namespace coco {
       return { b, e };
     }
 
-    template <typename Iter>
-    struct is_stream_trait<iterator_stream<Iter>> : std::true_type {};
+    template <typename Range>
+    auto range_stream(Range const& range)
+        -> iterator_stream<decltype(std::cbegin(range))> {
+      return {std::cbegin(range), std::cend(range)};
+    }
 
   } // namespace combix
 } // namespace coco

@@ -3,8 +3,8 @@
 
 #include <coco/combix/error.hpp>
 #include <coco/combix/parse_result.hpp>
-#include <coco/combix/parser_trait.hpp>
-#include <coco/combix/stream_trait.hpp>
+#include <coco/combix/parser_traits.hpp>
+#include <coco/combix/stream_traits.hpp>
 #include <coco/expected.hpp>
 
 namespace coco {
@@ -12,7 +12,7 @@ namespace coco {
 
     struct any_parser {
       template <typename Stream>
-      using result_type = typename stream_trait<Stream>::value_type;
+      using result_type = typename stream_traits<Stream>::value_type;
 
       template <typename Stream>
       parse_result<result_type<Stream>, Stream> operator()(Stream& s) const {
@@ -31,7 +31,7 @@ namespace coco {
     template <typename F>
     struct satisfy_parser {
       template <typename Stream>
-      using result_type = typename stream_trait<Stream>::value_type;
+      using result_type = typename stream_traits<Stream>::value_type;
 
       satisfy_parser(F&& f) : f(std::move(f)) {}
       satisfy_parser(F const& f) : f(f) {}
@@ -47,7 +47,7 @@ namespace coco {
           uncons(s);
           return token;
         }
-        return {error<typename stream_trait<Stream>::value_type>(
+        return {error<typename stream_traits<Stream>::value_type>(
             error_type::unexpected, token)};
       }
 
@@ -63,7 +63,7 @@ namespace coco {
     template <typename V>
     struct token_parser {
       template <typename Stream>
-      using result_type = typename stream_trait<Stream>::value_type;
+      using result_type = typename stream_traits<Stream>::value_type;
 
       token_parser(V v) : v(std::move(v)) {}
 
@@ -78,7 +78,7 @@ namespace coco {
           uncons(s);
           return {t};
         }
-        return {error<typename stream_trait<Stream>::value_type>(
+        return {error<typename stream_traits<Stream>::value_type>(
             error_type::unexpected, t)};
       }
 

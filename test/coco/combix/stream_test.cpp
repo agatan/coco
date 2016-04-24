@@ -2,7 +2,7 @@
 #define BOOST_TEST_MODULE expected
 
 #include <coco/combix/iterator_stream.hpp>
-#include <coco/combix/stream_trait.hpp>
+#include <coco/combix/stream_traits.hpp>
 
 #include <boost/test/unit_test.hpp>
 
@@ -33,11 +33,6 @@ BOOST_AUTO_TEST_SUITE(stream)
     auto saved = coco::combix::save(stream);
     BOOST_TEST(coco::combix::uncons(stream).unwrap() == '3');
     BOOST_TEST(coco::combix::uncons(saved).unwrap() == '3');
-
-    static_assert(coco::combix::is_stream_trait_v<decltype(saved)>,
-                  "iteratr stream should implement as stream trait");
-    static_assert(!coco::combix::is_stream_trait_v<int>,
-                  "int type should not be stream trait type");
   }
 
 BOOST_AUTO_TEST_SUITE_END()

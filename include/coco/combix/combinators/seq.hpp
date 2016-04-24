@@ -5,6 +5,7 @@
 #include <type_traits>
 
 #include <coco/combix/error.hpp>
+#include <coco/combix/parser_traits.hpp>
 
 namespace coco {
   namespace combix {

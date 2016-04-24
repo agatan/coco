@@ -4,7 +4,7 @@
 #include <type_traits>
 #include <utility>
 
-#include <coco/combix/parser_trait.hpp>
+#include <coco/combix/parser_traits.hpp>
 
 template <typename>
 struct TD;
