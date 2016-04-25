@@ -4,5 +4,6 @@
 #include <coco/combix/combinators/choice.hpp>
 #include <coco/combix/combinators/seq.hpp>
 #include <coco/combix/combinators/map.hpp>
+#include <coco/combix/combinators/many.hpp>
 
 #endif
