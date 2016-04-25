@@ -15,3 +15,9 @@ add_test(NAME combinators_test COMMAND $<TARGET_FILE:combinators_test>)
 target_link_libraries(combinators_test
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
   )
+
+add_executable(parser_test parser_test.cpp)
+add_test(NAME parser_test COMMAND $<TARGET_FILE:parser_test>)
+target_link_libraries(parser_test
+  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  )
