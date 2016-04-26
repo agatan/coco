@@ -3,5 +3,6 @@
 
 #include <coco/combix/chars/parens.hpp>
 #include <coco/combix/chars/alpha.hpp>
+#include <coco/combix/chars/digit.hpp>
 
 #endif
