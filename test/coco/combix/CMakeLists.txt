@@ -33,3 +33,9 @@ add_test(NAME lazy_fun_test COMMAND $<TARGET_FILE:lazy_fun_test>)
 target_link_libraries(lazy_fun_test
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
   )
+
+add_executable(error_test error_test.cpp)
+add_test(NAME error_test COMMAND $<TARGET_FILE:error_test>)
+target_link_libraries(error_test
+  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  )

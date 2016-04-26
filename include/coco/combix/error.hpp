@@ -42,7 +42,8 @@ namespace coco {
         std::ostream& os;
       };
 
-      return boost::apply_visitor(visitor{os}, info.value());
+      auto const& v = info.value();
+      return boost::apply_visitor(visitor{os}, v);
     }
 
     template <typename T>
@@ -63,6 +64,10 @@ namespace coco {
 
       iterator_type end() const {
         return expected_.end();
+      }
+
+      bool empty() const {
+        return expected_.empty();
       }
 
       void push_back(error_info<T> const& info) {
