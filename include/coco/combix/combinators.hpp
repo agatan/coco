@@ -6,5 +6,6 @@
 #include <coco/combix/combinators/map.hpp>
 #include <coco/combix/combinators/many.hpp>
 #include <coco/combix/combinators/chainl.hpp>
+#include <coco/combix/combinators/between.hpp>
 
 #endif

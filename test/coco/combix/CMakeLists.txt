@@ -21,3 +21,9 @@ add_test(NAME parser_test COMMAND $<TARGET_FILE:parser_test>)
 target_link_libraries(parser_test
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
   )
+
+add_executable(chars_test chars_test.cpp)
+add_test(NAME chars_test COMMAND $<TARGET_FILE:chars_test>)
+target_link_libraries(chars_test
+  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  )

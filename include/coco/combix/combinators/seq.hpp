@@ -82,7 +82,7 @@ namespace coco {
     };
 
     template <typename... Args>
-    seq_parser<Args...> seq(Args&&... args) {
+    seq_parser<std::decay_t<Args>...> seq(Args&&... args) {
       return {std::forward<Args>(args)...};
     }
 

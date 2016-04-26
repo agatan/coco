@@ -112,5 +112,20 @@ BOOST_AUTO_TEST_SUITE(combinators)
     BOOST_TEST(std::string(s.begin(), s.end()) == "");
   }
 
+template <typename>
+struct d;
+
+  BOOST_AUTO_TEST_CASE(between) {
+    auto src = std::string{"(a)"};
+    auto s = coco::combix::range_stream(src);
+    auto const alpha =
+        coco::combix::satisfy([](auto&& c) { return 'a' <= c && c <= 'z'; });
+    auto const p = coco::combix::between(coco::combix::token('('),
+                                         coco::combix::token(')'), alpha);
+
+    BOOST_TEST(parse(p, s).unwrap() == 'a');
+    BOOST_TEST(std::string(s.begin(), s.end()) == "");
+  }
+
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
