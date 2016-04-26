@@ -1,8 +1,6 @@
 #ifndef COCO_COMBIX_COMBINATORS_BETWEEN_HPP_
 #define COCO_COMBIX_COMBINATORS_BETWEEN_HPP_
 
-#include <iostream>
-
 #include <coco/combix/parse_result.hpp>
 #include <coco/combix/parser_traits.hpp>
 #include <coco/combix/combinators/map.hpp>
@@ -26,17 +24,14 @@ namespace coco {
         if (!op) {
           return {op.unwrap_error()};
         }
-        std::cerr << *op << std::endl;
         auto res = parse(parser, s);
         if (!res) {
           return res;
         }
-        std::cerr << *res << std::endl;
         auto cl = parse(close, s);
         if (!cl) {
           return {cl.unwrap_error()};
         }
-        std::cerr << *cl << std::endl;
         return res;
       }
 
