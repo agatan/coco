@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_SUITE(combinators)
         [](auto&& c) { return static_cast<int>(c) - '0'; });
     auto const p = coco::combix::many(digit);
 
-    BOOST_TEST((p(s).unwrap() == std::vector<int>{1, 2, 3}));
+    BOOST_TEST((p(s).unwrap() == std::list<int>{1, 2, 3}));
   }
 
   BOOST_AUTO_TEST_CASE(many_with_zero_input) {
@@ -72,7 +72,29 @@ BOOST_AUTO_TEST_SUITE(combinators)
         [](auto&& c) { return static_cast<int>(c) - '0'; });
     auto const p = coco::combix::many(digit);
 
-    BOOST_TEST((p(s).unwrap() == std::vector<int>{}));
+    BOOST_TEST((p(s).unwrap() == std::list<int>{}));
+  }
+
+  BOOST_AUTO_TEST_CASE(many1) {
+    auto src = std::string{"123"};
+    auto s = coco::combix::iter_stream(std::begin(src), std::end(src));
+    auto const digit = coco::combix::map(
+        coco::combix::satisfy([](auto&& c) { return '0' <= c && c <= '9'; }),
+        [](auto&& c) { return static_cast<int>(c) - '0'; });
+    auto const p = coco::combix::many1(digit);
+
+    BOOST_TEST((parse(p, s).unwrap() == std::list<int>{1, 2, 3}));
+  }
+
+  BOOST_AUTO_TEST_CASE(many1_with_zero_input) {
+    auto src = std::string{"abc"};
+    auto s = coco::combix::iter_stream(std::begin(src), std::end(src));
+    auto const digit = coco::combix::map(
+        coco::combix::satisfy([](auto&& c) { return '0' <= c && c <= '9'; }),
+        [](auto&& c) { return static_cast<int>(c) - '0'; });
+    auto const p = coco::combix::many1(digit);
+
+    BOOST_TEST(parse(p, s).is_error());
   }
 
   BOOST_AUTO_TEST_CASE(chainl1) {
