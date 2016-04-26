@@ -27,3 +27,9 @@ add_test(NAME chars_test COMMAND $<TARGET_FILE:chars_test>)
 target_link_libraries(chars_test
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
   )
+
+add_executable(lazy_fun_test lazy_fun_test.cpp)
+add_test(NAME lazy_fun_test COMMAND $<TARGET_FILE:lazy_fun_test>)
+target_link_libraries(lazy_fun_test
+  ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+  )
