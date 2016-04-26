@@ -37,52 +37,10 @@ assert(result.unwrap_error() == "negative number");
 `coco::combix` is a parser combinator component inspired by [Parsec](https://hackage.haskell.org/package/parsec) and [combine](https://github.com/Marwes/combine).  
 This component is under development.
 
-```c++
-#include <coco/combix/primitives.hpp>
-#include <coco/combix/combinators.hpp>
-#include <coco/combix/iterator_stream.hpp>
+#### example
 
-#include <iostream>
-#include <iterator>
-#include <string>
-
-auto expression() {
-  auto number = coco::combix::map(
-      coco::combix::satisfy([](auto&& c) { return '0' <= c && c <= '9'; }),
-      [](auto&& c) { return static_cast<int>(c) - '0'; });
-
-  return number;
-}
-
-int main() {
-  char const src[] = "2";
-  auto s = coco::combix::iter_stream(std::begin(src), std::end(src));
-
-  auto n = expression();
-
-  std::cout << n.parse(s).unwrap() << std::endl;
-}
-```
-
-#### primitives
-
-- `any`
-- `satisfy`
-- `token`
-
-#### combinators
-
-- `map`
-- `choice`
-- `seq`
-
-#### TODO
-
-- [ ] `lookahead`
-- [ ] `not_followed_by`
-- [ ] `many`
-- [ ] `many1`
-- [ ] `chainl`
+[agatan/coco-combix-demo](https://github.com/agatan/coco-combix-demo) is `coco::combix`'s demo repository.
+In that, parsing arithmetic expression and calcutating its value by `coco::combix`.
 
 ## LICENSE
 
