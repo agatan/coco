@@ -56,8 +56,8 @@ namespace coco {
     };
 
     template <typename F>
-    satisfy_parser<F> satisfy(F&& f) {
-      return satisfy_parser<F>(std::forward<F>(f));
+    satisfy_parser<std::decay_t<F>> satisfy(F&& f) {
+      return satisfy_parser<std::decay_t<F>>(std::forward<F>(f));
     }
 
     template <typename V>
@@ -87,8 +87,8 @@ namespace coco {
     };
 
     template <typename V>
-    token_parser<V> token(V&& v) {
-      return token_parser<V>(std::forward<V>(v));
+    token_parser<std::decay_t<V>> token(V&& v) {
+      return {std::forward<V>(v)};
     }
 
   } // namespace combix

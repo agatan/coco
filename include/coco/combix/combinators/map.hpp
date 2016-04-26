@@ -13,7 +13,7 @@ namespace coco {
     struct map_parser {
       template <typename Stream>
       using result_type = typename std::result_of<F(
-          parse_result_of_t<std::decay_t<P>, Stream>)>::type;
+          parse_result_of_t<P, Stream>)>::type;
 
       map_parser(P const& p, F const& f) : p(p), f(f) {}
 
@@ -28,7 +28,7 @@ namespace coco {
     };
 
     template <typename P, typename F>
-    map_parser<P, F> map(P&& p, F&& f) {
+    map_parser<std::decay_t<P>, std::decay_t<F>> map(P&& p, F&& f) {
       return {p, f};
     }
     

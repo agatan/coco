@@ -75,5 +75,20 @@ BOOST_AUTO_TEST_SUITE(combinators)
     BOOST_TEST((p(s).unwrap() == std::vector<int>{}));
   }
 
+  BOOST_AUTO_TEST_CASE(chainl1) {
+    auto src = std::string{"1+2+3"};
+    auto s = coco::combix::range_stream(src);
+    auto const digit = coco::combix::map(
+        coco::combix::satisfy([](auto&& c) { return '1' <= c && c <= '9'; }),
+        [](auto&& c) { return static_cast<int>(c) - '0'; });
+    auto const add = coco::combix::map(coco::combix::token('+'), [](auto&&) {
+      return std::plus<int>();
+    });
+    auto const expr = coco::combix::chainl1(digit, add);
+
+    BOOST_TEST(parse(expr, s).unwrap() == 6);
+    BOOST_TEST(std::string(s.begin(), s.end()) == "");
+  }
+
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

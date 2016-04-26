@@ -79,7 +79,7 @@ namespace coco {
       return value.which() == 0;
     }
 
-    operator bool() const noexcept {
+    explicit operator bool() const noexcept {
       return is_ok();
     }
 

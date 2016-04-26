@@ -23,7 +23,7 @@ namespace coco {
         static_assert(is_parser_v<P, Stream>,
                       "template argument is not a parser");
         std::vector<parse_result_of_t<P, Stream>> result;
-        for (auto r = parser(s); r; r = parser(s)) {
+        for (auto r = parse(parser, s); r; r = parse(parser, s)) {
           result.push_back(*r);
         }
         return result;
