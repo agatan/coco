@@ -24,8 +24,8 @@ namespace coco {
     };
 
     template <typename P>
-    parens_parser<std::decay_t<P>> parens(P&& parser) {
-      return parens_parser<std::decay_t<P>>{std::forward<P>(parser)};
+    auto parens(P&& parser) {
+      return between(token('('), token(')'), parser);
     }
 
   } // namespace combix

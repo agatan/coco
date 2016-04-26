@@ -2,12 +2,30 @@
 #define COCO_COMBIX_PARSER_TRAIT_HPP_
 
 #include <type_traits>
+#include <list>
 
 #include <coco/combix/error.hpp>
 #include <coco/combix/parse_result.hpp>
 
 namespace coco {
   namespace combix {
+
+    struct has_expected_info_impl {
+      template <typename P, typename S>
+      static auto check(P* p) -> decltype(
+          p->template expected_info<S>(),
+          std::true_type{});
+
+      template <typename, typename>
+      static auto check(...) -> std::false_type;
+    };
+
+    template <typename P, typename S>
+    struct has_expected_info
+        : public decltype(has_expected_info_impl::check<P, S>(nullptr)) {};
+
+    template <typename P, typename S>
+    constexpr bool has_expected_info_v = has_expected_info<P, S>::value;
 
     struct is_parser_impl {
       template <typename P, typename S>
@@ -19,7 +37,11 @@ namespace coco {
     };
 
     template <typename P, typename S>
-    struct is_parser : decltype(is_parser_impl::check<P, S>(nullptr)) {};
+    struct is_parser {
+      static constexpr bool value =
+          decltype(is_parser_impl::check<P, S>(nullptr))::value &&
+          has_expected_info_v<P, S>;
+    };
 
     template <typename P, typename S>
     constexpr bool is_parser_v = is_parser<P, S>::value;
@@ -43,11 +65,22 @@ namespace coco {
                                                      Stream& s) {
         return p(s);
       }
+
+      static expected_list<typename stream_traits<Stream>::value_type>
+      expected_info(Parser const& parser) {
+        return parser.template expected_info<Stream>();
+      }
     };
 
     template <typename P, typename S>
     auto parse(P const& parser, S& stream) {
       return parser_traits<P, S>::parse(parser, stream);
+    }
+
+    template <typename S, typename P>
+    expected_list<typename stream_traits<S>::value_type>
+    expected_info(P const& p) {
+      return parser_traits<P, S>::expected_info(p);
     }
 
   } // namespace combix

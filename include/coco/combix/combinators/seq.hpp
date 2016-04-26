@@ -48,6 +48,12 @@ namespace coco {
         return parse(p, s).map([](auto&& r) { return std::make_tuple(r); });
       }
 
+      template <typename S>
+      expected_list<typename stream_traits<S>::value_type> expected_info()
+          const {
+        return parser_traits<P, S>::expected_info(p);
+      }
+
      private:
       P p;
     };
@@ -68,6 +74,7 @@ namespace coco {
       parse_result<result_type<Stream>, Stream> operator()(Stream& s) const {
         auto res = parse(p, s);
         if (!res) {
+          res.unwrap_error().set_expected(expected_info<Stream>());
           return res.unwrap_error();
         }
         auto tail = base_type::operator()(s);
@@ -75,6 +82,16 @@ namespace coco {
           return tail.unwrap_error();
         }
         return detail::add_tuple(*res, *tail);
+      }
+
+      template <typename S>
+      expected_list<typename stream_traits<S>::value_type> expected_info()
+          const {
+        auto current = parser_traits<Head, S>::expected_info(p);
+        if (current.nullable()) {
+          current.merge(base_type::template expected_info<S>());
+        }
+        return current;
       }
 
     private:

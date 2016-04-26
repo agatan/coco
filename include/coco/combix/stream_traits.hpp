@@ -18,25 +18,25 @@ namespace coco {
         return t.save();
       }
 
-      static coco::expected<value_type, error<value_type>> peek(T& t) {
+      static coco::expected<value_type, parse_error<value_type>> peek(T& t) {
         return t.peek();
       }
 
-      static coco::expected<value_type, error<value_type>> uncons(T& t) {
+      static coco::expected<value_type, parse_error<value_type>> uncons(T& t) {
         return t.uncons();
       }
     };
 
     template <typename T>
     coco::expected<typename stream_traits<T>::value_type,
-                   error<typename stream_traits<T>::value_type>>
+                   parse_error<typename stream_traits<T>::value_type>>
     peek(T& t) {
       return stream_traits<T>::peek(t);
     }
 
     template <typename T>
     coco::expected<typename stream_traits<T>::value_type,
-                   error<typename stream_traits<T>::value_type>>
+                   parse_error<typename stream_traits<T>::value_type>>
     uncons(T& t) {
       return stream_traits<T>::uncons(t);
     }

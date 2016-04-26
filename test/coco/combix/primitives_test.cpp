@@ -16,6 +16,10 @@ BOOST_AUTO_TEST_SUITE(primitives)
     auto s = coco::combix::iter_stream(std::begin(src), std::end(src));
     auto const p = coco::combix::any();
 
+    static_assert(coco::combix::has_expected_info<decltype(p), decltype(s)>::value, "");
+    static_assert(coco::combix::is_parser_v<decltype(p), decltype(s)>,
+                  "not parser");
+
     BOOST_TEST(p(s).unwrap() == 't');
     BOOST_TEST(p(s).unwrap() == 'e');
     BOOST_TEST(p(s).unwrap() == 's');
@@ -28,6 +32,9 @@ BOOST_AUTO_TEST_SUITE(primitives)
     auto s = coco::combix::iter_stream(std::begin(src), std::end(src));
     auto const p =
         coco::combix::satisfy([](auto&& c) { return 'a' <= c && c <= 'z'; });
+
+    static_assert(coco::combix::is_parser_v<decltype(p), decltype(s)>,
+                  "not parser");
 
     BOOST_TEST(p(s).is_ok());
     BOOST_TEST(p(s).is_ok());
@@ -47,6 +54,9 @@ BOOST_AUTO_TEST_SUITE(primitives)
     auto src = std::string{"test"};
     auto s = coco::combix::iter_stream(std::begin(src), std::end(src));
     auto const p = coco::combix::token('t');
+
+    static_assert(coco::combix::is_parser_v<decltype(p), decltype(s)>,
+                  "not parser");
 
     BOOST_TEST(p(s).unwrap() == 't');
     BOOST_TEST(p(s).is_error());

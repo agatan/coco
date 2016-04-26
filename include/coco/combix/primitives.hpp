@@ -20,7 +20,15 @@ namespace coco {
         if (res) {
           return *res;
         }
+        res.unwrap_error().set_expected(expected_info<Stream>());
         return {res.unwrap_error()};
+      }
+
+      template <typename S>
+      expected_list<typename stream_traits<S>::value_type> expected_info()
+          const {
+        return expected_list<typename stream_traits<S>::value_type>{
+            error_info<typename stream_traits<S>::value_type>("any input")};
       }
     };
 
@@ -47,11 +55,17 @@ namespace coco {
           uncons(s);
           return token;
         }
-        return {error<typename stream_traits<Stream>::value_type>(
-            error_type::unexpected, token)};
+        using value_type = typename stream_traits<Stream>::value_type;
+        return parse_error<value_type>(error_info<value_type>(token));
       }
 
-    private:
+      template <typename S>
+      expected_list<typename stream_traits<S>::value_type> expected_info()
+          const {
+        return expected_list<typename stream_traits<S>::value_type>{};
+      }
+
+     private:
       F f;
     };
 
@@ -78,8 +92,16 @@ namespace coco {
           uncons(s);
           return {t};
         }
-        return {error<typename stream_traits<Stream>::value_type>(
-            error_type::unexpected, t)};
+        using value_type = typename stream_traits<Stream>::value_type;
+        return parse_error<value_type>(error_info<value_type>(t),
+                                       expected_info<Stream>());
+      }
+
+      template <typename S>
+      expected_list<typename stream_traits<S>::value_type> expected_info()
+          const {
+        return expected_list<typename stream_traits<S>::value_type>{
+            error_info<typename stream_traits<S>::value_type>(v)};
       }
 
     private:

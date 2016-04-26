@@ -27,13 +27,15 @@ namespace coco {
 
         auto res = parse(parser, s);
         if (!res) {
-          return res;
+          res.unwrap_error().set_expected(expected_info<Stream>());
+          return res.unwrap_error();
         }
         auto lhs = *res;
         auto op = parse(op_parser, s);
         while (op.is_ok()) {
           auto rhs = parse(parser, s);
           if (!rhs) {
+            rhs.unwrap_error().set_expected(expected_info<Stream>());
             return rhs;
           }
           auto tmp = op.unwrap()(std::move(lhs), std::move(*rhs));
@@ -41,6 +43,16 @@ namespace coco {
           op = parse(op_parser, s);
         }
         return {lhs};
+      }
+
+      template <typename S>
+      expected_list<typename stream_traits<S>::value_type> expected_info()
+          const {
+        auto current = parser_traits<P, S>::expected_info(parser);
+        if (current.nullable()) {
+          current.merge(parser_traits<Op, S>::expected_info(op_parser));
+        }
+        return current;
       }
 
     private:

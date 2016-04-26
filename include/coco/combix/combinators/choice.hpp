@@ -4,10 +4,8 @@
 #include <type_traits>
 #include <utility>
 
+#include <coco/combix/error.hpp>
 #include <coco/combix/parser_traits.hpp>
-
-template <typename>
-struct TD;
 
 namespace coco {
   namespace combix {
@@ -20,11 +18,15 @@ namespace coco {
       choice_parser(P const& p) : p(p) {}
 
       template <typename Stream>
-      parse_result<parse_result_of_t<std::decay_t<P>, Stream>, Stream>
+      parse_result<parse_result_of_t<P, Stream>, Stream>
       operator()(Stream& s) const {
-        static_assert(is_parser_v<std::decay_t<P>, Stream>,
-                      "template argument is not a parser");
         return parse(p, s);
+      }
+
+      template <typename S>
+      expected_list<typename stream_traits<S>::value_type> expected_info()
+          const {
+        return parser_traits<P, S>::expected_info(p);
       }
 
      private:
@@ -40,18 +42,30 @@ namespace coco {
 
       template <typename Stream>
       typename std::enable_if<
-          std::is_same<parse_result_of_t<std::decay_t<Head>, Stream>,
+          std::is_same<parse_result_of_t<Head, Stream>,
                        parse_result_of_t<base_type, Stream>>::value,
-          parse_result<parse_result_of_t<std::decay_t<Head>, Stream>,
+          parse_result<parse_result_of_t<Head, Stream>,
                        Stream>>::type
       operator()(Stream& s) const {
-        static_assert(is_parser_v<std::decay_t<Head>, Stream>,
-                      "template argument is not a parser");
         auto res = parse(p, s);
         if (res) {
           return res;
         }
-        return base_type::operator()(s);
+        res = base_type::operator()(s);
+        if (res) {
+          return res;
+        }
+        res.unwrap_error().set_expected(expected_info<Stream>());
+        return res.unwrap_error();
+      }
+
+      template <typename S>
+      expected_list<typename stream_traits<S>::value_type> expected_info()
+          const {
+        auto base = base_type::template expected_info<S>();
+        auto info = parser_traits<Head, S>::expected_info(p);
+        info.merge(base);
+        return info;
       }
 
      private:
@@ -59,8 +73,8 @@ namespace coco {
     };
 
     template <typename... Args>
-    choice_parser<Args...> choice(Args&&... args) {
-      return choice_parser<Args...>(std::forward<Args>(args)...);
+    choice_parser<std::decay_t<Args>...> choice(Args&&... args) {
+      return choice_parser<std::decay_t<Args>...>(std::forward<Args>(args)...);
     }
 
   } // namespace combix

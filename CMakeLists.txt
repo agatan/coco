@@ -18,6 +18,7 @@ endif()
 include_directories(${Boost_INCLUDE_DIRS})
 
 if(NOT without-test)
+  set(CTEST_OUTPUT_ON_FAILURE TRUE)
   enable_testing()
   add_subdirectory(test)
 endif()

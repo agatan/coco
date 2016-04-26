@@ -17,6 +17,14 @@ namespace coco {
       operator()(Stream& s) const {
         return parse(f(), s);
       }
+
+      template <typename S>
+      expected_list<typename stream_traits<S>::value_type> expected_info()
+          const {
+        return parser_traits<decltype(std::declval<F>()()), S>::expected_info(
+            f());
+      }
+
     private:
       F f;
     };

@@ -26,6 +26,13 @@ namespace coco {
         }
         return result;
       }
+
+      template <typename S>
+      expected_list<typename stream_traits<S>::value_type> expected_info() const {
+        auto head = parser_traits<P, S>::expected_info(parser);
+        head.nullable(true);
+        return head;
+      }
     private:
       P parser;
     };
@@ -47,6 +54,7 @@ namespace coco {
       operator()(Stream& s) const {
         auto res = parse(parser, s);
         if (!res) {
+          res.unwrap_error().set_expected(expected_info<Stream>());
           return {res.unwrap_error()};
         }
         auto tail = parse(many(parser), s);
@@ -55,6 +63,11 @@ namespace coco {
         }
         tail.unwrap().push_front(res.unwrap());
         return tail;
+      }
+
+      template <typename S>
+      expected_list<typename stream_traits<S>::value_type> expected_info() const {
+        return parser_traits<P, S>::expected_info(parser);
       }
 
     private:

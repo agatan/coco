@@ -2,6 +2,7 @@
 #define COCO_COMBIX_PARSER_HPP_
 
 #include <memory>
+#include <type_traits>
 
 #include <coco/combix/parse_result.hpp>
 
@@ -34,10 +35,21 @@ namespace coco {
         return (*holder_)(s);
       }
 
-    private:
+      template <typename S>
+      typename std::enable_if<
+          std::is_same<S, Stream>::value,
+          expected_list<typename stream_traits<Stream>::value_type>>::type
+      expected_info() const {
+        return holder_->expected_info();
+      }
+
+     private:
       struct holder_base {
-        virtual parse_result<Result, Stream> operator()(Stream&) const = 0;
         virtual ~holder_base() = default;
+
+        virtual parse_result<Result, Stream> operator()(Stream&) const = 0;
+        virtual expected_list<typename stream_traits<Stream>::value_type>
+        expected_info() const = 0;
 
         virtual std::unique_ptr<holder_base> copy() const = 0;
       };
@@ -50,7 +62,12 @@ namespace coco {
         ~holder() = default;
 
         parse_result<Result, Stream> operator()(Stream& s) const override {
-          return parser(s);
+          return parser_traits<P, Stream>::parse(parser, s);
+        }
+
+        expected_list<typename stream_traits<Stream>::value_type>
+        expected_info() const override {
+          return parser_traits<P, Stream>::expected_info(parser);
         }
 
         std::unique_ptr<holder_base> copy() const override {

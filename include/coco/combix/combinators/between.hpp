@@ -35,6 +35,19 @@ namespace coco {
         return res;
       }
 
+      template <typename S>
+      expected_list<typename stream_traits<S>::value_type> expected_info()
+          const {
+        auto o = parser_traits<Open, S>::expected_info(open);
+        if (o.nullable()) {
+          o.merge(parser_traits<Parser, S>::expected_info(parser));
+        }
+        if (o.nullable()) {
+          o.merge(parser_traits<Close, S>::expected_info(close));
+        }
+        return o;
+      }
+
      private:
       Open open;
       Close close;

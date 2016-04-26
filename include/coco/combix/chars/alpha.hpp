@@ -13,6 +13,13 @@ namespace coco {
       parse_result<char, Stream> operator()(Stream& s) const {
         return parse(satisfy([](auto c) { return 'A' <= c && c <= 'z'; }), s);
       }
+
+      template <typename S>
+      expected_list<typename stream_traits<S>::value_type> expected_info()
+          const {
+        return expected_list<typename stream_traits<S>::value_type>(
+            std::string{"alphabet"});
+      }
     };
 
     alpha_parser alpha() {

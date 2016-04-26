@@ -22,6 +22,12 @@ namespace coco {
         return parse(p, s).map(f);
       }
 
+      template <typename S>
+      expected_list<typename stream_traits<S>::value_type> expected_info()
+          const {
+        return parser_traits<P, S>::expected_info(p);
+      }
+
     private:
       P p;
       F f;

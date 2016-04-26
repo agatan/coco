@@ -17,6 +17,13 @@ namespace coco {
         }
         return static_cast<int>(res.unwrap()) - '0';
       }
+
+      template <typename S>
+      expected_list<typename stream_traits<S>::value_type> expected_info()
+          const {
+        return expected_list<typename stream_traits<S>::value_type>(
+            std::string{"digit"});
+      }
     };
 
     digit_parser digit() {
