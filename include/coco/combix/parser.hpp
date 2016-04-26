@@ -11,10 +11,10 @@ namespace coco {
     template <typename Result, typename Stream>
     struct parser {
       template <typename P>
-      explicit parser(P const& p) : holder_(std::make_unique<holder<P>>(p)) {}
+      parser(P const& p) : holder_(std::make_unique<holder<P>>(p)) {}
 
       template <typename P>
-      explicit parser(P&& p) : holder_(std::make_unique<holder<P>>(std::move(p))) {}
+      parser(P&& p) : holder_(std::make_unique<holder<P>>(std::move(p))) {}
 
       parser(parser const& p) : holder_(p.holder_->copy()) {}
       parser(parser&& p) : holder_(std::move(p.holder_)) {}
