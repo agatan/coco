@@ -39,8 +39,7 @@ This component is under development.
 
 #### example
 
-[agatan/coco-combix-demo](https://github.com/agatan/coco-combix-demo) is `coco::combix`'s demo repository.
-In that, parsing arithmetic expression and calcutating its value by `coco::combix`.
+[agatan/coco-combix-demo](https://github.com/agatan/coco-combix-demo) is `coco::combix`'s demo repository, parsing arithmetic expressions and calculating thier values by `coco::combix`.
 
 ## LICENSE
 
