@@ -11,7 +11,7 @@ namespace coco {
 
     struct digit_parser {
       template <typename Stream>
-      parse_result<int, Stream> operator()(Stream& s) const {
+      parse_result<char, Stream> operator()(Stream& s) const {
         auto res =
             parse(expected(satisfy([](auto c) { return '0' <= c && c <= '9'; }),
                            "digit"),
@@ -19,7 +19,7 @@ namespace coco {
         if (!res) {
           return res.unwrap_error();
         }
-        return static_cast<int>(res.unwrap()) - '0';
+        return res.unwrap();
       }
 
       template <typename S>

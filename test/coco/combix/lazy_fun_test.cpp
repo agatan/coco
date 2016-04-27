@@ -22,7 +22,7 @@ cbx::parser<int, stream_type> number() {
   return cbx::map(cbx::many1(cbx::digit()), [](auto&& is) {
     int acc = 0;
     for (auto i : is) {
-      acc = acc * 10 + i;
+      acc = acc * 10 + (static_cast<int>(i) - '0');
     }
     return acc;
   });

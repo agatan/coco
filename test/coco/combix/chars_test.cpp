@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_SUITE(combinators)
     auto const src = std::string("1");
     auto s = cbx::range_stream(src);
     auto const p = cbx::digit();
-    BOOST_TEST(parse(p, s).unwrap() == 1);
+    BOOST_TEST(parse(p, s).unwrap() == '1');
   }
 
   BOOST_AUTO_TEST_CASE(string) {

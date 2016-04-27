@@ -142,7 +142,7 @@ BOOST_AUTO_TEST_SUITE(combinators)
 
     auto const p = cbx::many(cbx::skip(cbx::digit(), cbx::spaces()));
 
-    BOOST_TEST((parse(p, s).unwrap() == std::list<int>{1, 2, 3}));
+    BOOST_TEST((parse(p, s).unwrap() == std::list<char>{'1', '2', '3'}));
   }
 
   BOOST_AUTO_TEST_CASE(skip_seq) {
@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_SUITE(combinators)
     auto const p =
         cbx::skip_seq(cbx::spaces())(cbx::digit(), cbx::alpha(), cbx::digit());
 
-    BOOST_TEST((parse(p, s).unwrap() == std::make_tuple(1, 'a', 2)));
+    BOOST_TEST((parse(p, s).unwrap() == std::make_tuple('1', 'a', '2')));
   }
 
 BOOST_AUTO_TEST_SUITE_END()
