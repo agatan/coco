@@ -50,9 +50,6 @@ namespace coco {
     ~expected() = default;
 
     // constructors
-    expected(T const& v): value(v) {}
-    expected(T&& v): value(std::move(v)) {}
-
     template <typename T2,
               typename std::enable_if<std::is_convertible<T2, T>::value,
                                       std::nullptr_t>::type = nullptr>
