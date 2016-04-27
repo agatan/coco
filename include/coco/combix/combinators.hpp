@@ -9,5 +9,6 @@
 #include <coco/combix/combinators/between.hpp>
 
 #include <coco/combix/combinators/expected.hpp>
+#include <coco/combix/combinators/skip.hpp>
 
 #endif
