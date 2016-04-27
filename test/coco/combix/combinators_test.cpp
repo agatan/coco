@@ -155,5 +155,14 @@ BOOST_AUTO_TEST_SUITE(combinators)
     BOOST_TEST((parse(p, s).unwrap() == std::make_tuple('1', 'a', '2')));
   }
 
+  BOOST_AUTO_TEST_CASE(sep_by) {
+    auto src = std::string("1,2,3");
+    auto s = cbx::range_stream(src);
+
+    auto const p = cbx::sep_by(cbx::digit(), cbx::token(','));
+
+    BOOST_TEST((parse(p, s).unwrap() == std::list<char>{'1', '2', '3'}));
+  }
+
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

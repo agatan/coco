@@ -10,5 +10,6 @@
 #include <coco/combix/combinators/expected.hpp>
 #include <coco/combix/combinators/skip.hpp>
 #include <coco/combix/combinators/skip_seq.hpp>
+#include <coco/combix/combinators/sep_by.hpp>
 
 #endif
