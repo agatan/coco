@@ -29,6 +29,10 @@ namespace coco {
       static coco::expected<value_type, parse_error<value_type>> uncons(T& t) {
         return t.uncons();
       }
+
+      static bool is_eof(T const& t) {
+        return t.is_eof();
+      }
     };
 
     template <typename T>
@@ -53,6 +57,11 @@ namespace coco {
     template <typename T>
     void restore(T& t, T&& saved) {
       stream_traits<T>::restore(t, std::move(saved));
+    }
+
+    template <typename T>
+    bool is_eof(T const& t) {
+      return stream_traits<T>::is_eof(t);
     }
 
   } // namespace combix

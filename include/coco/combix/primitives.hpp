@@ -5,6 +5,7 @@
 #include <coco/combix/parse_result.hpp>
 #include <coco/combix/parser_traits.hpp>
 #include <coco/combix/stream_traits.hpp>
+#include <coco/combix/unused.hpp>
 #include <coco/expected.hpp>
 
 namespace coco {
@@ -110,6 +111,27 @@ namespace coco {
     token_parser<std::decay_t<V>> token(V&& v) {
       return {std::forward<V>(v)};
     }
+
+    struct eof_parser {
+      template <typename Stream>
+      parse_result<unused, Stream> operator()(Stream& s) const {
+        if (is_eof(s)) {
+          return unused();
+        }
+        auto t = peek(s).unwrap();
+        return parse_error<typename stream_traits<Stream>::value_type>(
+            t, expected_info<Stream>());
+      }
+
+      template <typename Stream>
+      expected_list<typename stream_traits<Stream>::value_type> expected_info()
+          const {
+        return expected_list<typename stream_traits<Stream>::value_type>(
+            std::string{"end of input"});
+      }
+    };
+
+    eof_parser eof();
 
   } // namespace combix
 } // namespace coco

@@ -63,6 +63,18 @@ BOOST_AUTO_TEST_SUITE(primitives)
     BOOST_TEST(*(s.begin()) == 'e');
   }
 
+  BOOST_AUTO_TEST_CASE(eof) {
+    auto src = std::string{"a"};
+    auto s = coco::combix::range_stream(src);
+    auto const p = coco::combix::eof();
+
+    BOOST_TEST(parse(p, s).is_error());
+
+    src = "";
+    s = coco::combix::range_stream(src);
+    BOOST_TEST(parse(p, s).is_ok());
+  }
+
 
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

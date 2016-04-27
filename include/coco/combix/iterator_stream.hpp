@@ -48,6 +48,10 @@ namespace coco {
         return *begin_++;
       }
 
+      bool is_eof() const {
+        return begin_ == end_;
+      }
+
     private:
       Iter begin_;
       Iter end_;
