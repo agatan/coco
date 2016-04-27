@@ -75,13 +75,6 @@ namespace coco {
       value = std::move(e.value);
       return *this;
     }
-    template <typename T2,
-              typename std::enable_if<std::is_convertible<T2, T>::value,
-                                      std::nullptr_t>::type = nullptr>
-    expected& operator=(T2 const& v) {
-      value = v;
-      return *this;
-    }
 
     bool is_ok() const noexcept {
       return value.which() == 1;
