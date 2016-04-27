@@ -18,6 +18,10 @@ namespace coco {
         return t.save();
       }
 
+      static void restore(T& t, T&& saved) {
+        return t.restore(std::move(saved));
+      }
+
       static coco::expected<value_type, parse_error<value_type>> peek(T& t) {
         return t.peek();
       }
@@ -44,6 +48,11 @@ namespace coco {
     template <typename T>
     T save(T const& t) {
       return stream_traits<T>::save(t);
+    }
+
+    template <typename T>
+    void restore(T& t, T&& saved) {
+      stream_traits<T>::restore(t, std::move(saved));
     }
 
   } // namespace combix

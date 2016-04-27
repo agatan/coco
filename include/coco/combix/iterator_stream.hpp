@@ -30,6 +30,11 @@ namespace coco {
         return iterator_stream<Iter>(begin_, end_);
       }
 
+      void restore(iterator_stream&& saved) {
+        begin_ = std::move(saved.begin_);
+        end_ = std::move(saved.end_);
+      }
+
       coco::expected<value_type, parse_error<value_type>> peek() {
         if (begin_ == end_) {
           return end_of_input<value_type>();

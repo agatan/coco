@@ -124,9 +124,8 @@ namespace coco {
         expected_.push_back(info);
       }
 
-      template <typename Infos>
-      void set_expected(Infos&& infos) {
-        expected_ = expected_list<T>{std::forward<Infos>(infos)};
+      void set_expected(expected_list<T>&& infos) {
+        expected_ = std::move(infos);
       }
 
       void set_unexpected(error_info<T> const& info) {
