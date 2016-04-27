@@ -8,4 +8,6 @@
 #include <coco/combix/combinators/chainl.hpp>
 #include <coco/combix/combinators/between.hpp>
 
+#include <coco/combix/combinators/expected.hpp>
+
 #endif

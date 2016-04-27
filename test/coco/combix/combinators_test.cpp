@@ -111,9 +111,6 @@ BOOST_AUTO_TEST_SUITE(combinators)
     BOOST_TEST(std::string(s.begin(), s.end()) == "");
   }
 
-template <typename>
-struct d;
-
   BOOST_AUTO_TEST_CASE(between) {
     auto src = std::string{"(a)"};
     auto s = coco::combix::range_stream(src);
@@ -124,6 +121,16 @@ struct d;
 
     BOOST_TEST(parse(p, s).unwrap() == 'a');
     BOOST_TEST(std::string(s.begin(), s.end()) == "");
+  }
+
+  BOOST_AUTO_TEST_CASE(expected) {
+    auto src = std::string("hoge");
+    auto s = coco::combix::range_stream(src);
+    auto const lower = coco::combix::expected(
+        coco::combix::satisfy([](auto&& c) { return 'a' <= c && c <= 'z'; }),
+        "lower");
+
+    BOOST_TEST(parse(lower, s).unwrap() == 'h');
   }
 
 BOOST_AUTO_TEST_SUITE_END()
