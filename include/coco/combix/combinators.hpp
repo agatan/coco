@@ -7,8 +7,8 @@
 #include <coco/combix/combinators/many.hpp>
 #include <coco/combix/combinators/chainl.hpp>
 #include <coco/combix/combinators/between.hpp>
-
 #include <coco/combix/combinators/expected.hpp>
 #include <coco/combix/combinators/skip.hpp>
+#include <coco/combix/combinators/skip_seq.hpp>
 
 #endif
