@@ -43,9 +43,9 @@ namespace coco {
 
       template <typename Stream>
       parse_result<result_type<Stream>, Stream> operator()(Stream& s) const {
-        static_assert(is_parser_v<std::decay_t<P>, Stream>,
-                      "template argument is not a parser");
-        return parse(p, s).map([](auto&& r) { return std::make_tuple(r); });
+        return parse(p, s).map([](auto&& r) {
+          return std::make_tuple(std::forward<decltype(r)>(r));
+        });
       }
 
       template <typename S>
@@ -75,11 +75,11 @@ namespace coco {
         auto res = parse(p, s);
         if (!res) {
           res.unwrap_error().set_expected(expected_info<Stream>());
-          return res.unwrap_error();
+          return parse_result<result_type<Stream>, Stream>(res.unwrap_error());
         }
         auto tail = base_type::operator()(s);
         if (!tail) {
-          return tail.unwrap_error();
+          return parse_result<result_type<Stream>, Stream>(tail.unwrap_error());
         }
         return detail::add_tuple(*res, *tail);
       }
