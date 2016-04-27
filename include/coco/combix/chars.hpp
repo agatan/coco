@@ -5,5 +5,6 @@
 #include <coco/combix/chars/alpha.hpp>
 #include <coco/combix/chars/digit.hpp>
 #include <coco/combix/chars/string.hpp>
+#include <coco/combix/chars/space.hpp>
 
 #endif

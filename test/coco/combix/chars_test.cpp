@@ -38,5 +38,23 @@ BOOST_AUTO_TEST_SUITE(combinators)
     BOOST_TEST(parse(p, s).unwrap() == "string");
   }
 
+  BOOST_AUTO_TEST_CASE(spaces) {
+    auto const space = cbx::space();
+    auto const spaces = cbx::spaces();
+
+    {
+      auto const src = std::string("non-space");
+      auto s = cbx::range_stream(src);
+
+      BOOST_TEST(parse(space, s).is_error());
+    }
+    {
+      auto const src = std::string(" \t\n");
+      auto s = cbx::range_stream(src);
+
+      BOOST_TEST(parse(spaces, s).is_ok());
+    }
+  }
+
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
