@@ -11,7 +11,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O2 -s -DNDEBUG")
 
 include_directories(include)
 
-install(DIRECTORY include/coco DESTINATION include)
+install(DIRECTORY include/coco DESTINATION include
+  FILES_MATCHING PATTERN "*.hpp")
 
 add_subdirectory(src)
 
