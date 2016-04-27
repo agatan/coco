@@ -26,9 +26,7 @@ namespace coco {
       }
     };
 
-    alpha_parser alpha() {
-      return {};
-    }
+    alpha_parser alpha();
 
   } // namespace combix
 } // namespace coco

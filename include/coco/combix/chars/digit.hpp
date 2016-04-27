@@ -30,9 +30,7 @@ namespace coco {
       }
     };
 
-    digit_parser digit() {
-      return {};
-    }
+    digit_parser digit();
 
   } // namespace combix
 } // namespace coco

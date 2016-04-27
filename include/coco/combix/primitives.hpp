@@ -32,9 +32,7 @@ namespace coco {
       }
     };
 
-    any_parser any() {
-      return any_parser{};
-    }
+    any_parser any();
 
     template <typename F>
     struct satisfy_parser {
