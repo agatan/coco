@@ -44,13 +44,9 @@ namespace coco {
       std::string str;
     };
 
-    string_parser string(std::string const& s) {
-      return string_parser(s);
-    }
+    string_parser string(std::string const& s);
 
-    string_parser string(std::string&& s) {
-      return string_parser(std::move(s));
-    }
+    string_parser string(std::string&& s);
 
   } // namespace combix
 } // namespace coco

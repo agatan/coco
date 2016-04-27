@@ -33,13 +33,9 @@ namespace coco {
       }
     };
 
-    space_parser space() {
-      return {};
-    }
+    space_parser space();
 
-    expected_parser<many_parser<space_parser>> spaces() {
-      return expected(many(space()), "whitespaces");
-    }
+    expected_parser<many_parser<space_parser>> spaces();
 
   } // namespace combix
 } // namespace coco

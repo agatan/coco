@@ -10,6 +10,9 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -pg")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -s -DNDEBUG")
 
 include_directories(include)
+
+install(DIRECTORY include/coco DESTINATION include)
+
 add_subdirectory(src)
 
 find_package(Boost 1.59.0 REQUIRED COMPONENTS system)
