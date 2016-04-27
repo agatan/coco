@@ -1,6 +1,17 @@
 This is my utility library on C++.  
 `coco` is just getting started.
 
+## Install
+
+```
+git clone https://github.com/agatan/coco
+cd coco
+mkdir build && cd build
+cmake ..
+make
+make install
+```
+
 ## Components
 
 ### expected
