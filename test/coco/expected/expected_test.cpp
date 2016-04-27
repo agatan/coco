@@ -146,4 +146,15 @@ BOOST_AUTO_TEST_CASE(operator_star) {
   BOOST_TEST(*e == 1);
 }
 
+BOOST_AUTO_TEST_CASE(convertiable) {
+  int i = 0;
+  coco::expected<double, std::string> e(i);
+
+  struct int_convertiable {
+    int_convertiable(int v) : value(v) {}
+    int value;
+  };
+  coco::expected<int_convertiable, std::string> e2(i);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
