@@ -30,7 +30,7 @@ namespace coco {
       template <typename Stream>
       expected_list<typename stream_traits<Stream>::value_type> expected_info()
           const {
-        return expected_info<Stream>(parser);
+        return coco::combix::expected_info<Stream>(parser);
       }
 
     private:
