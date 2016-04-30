@@ -41,7 +41,7 @@ namespace coco {
       expected_list<typename stream_traits<S>::value_type> expected_info() const {
         auto head = parser_traits<P, S>::expected_info(parser);
         if (head.nullable()) {
-          head.merge(parser_traits<P, S>::expected_info(sep));
+          head.merge(parser_traits<Sep, S>::expected_info(sep));
         }
         return head;
       }
