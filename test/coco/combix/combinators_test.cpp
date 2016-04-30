@@ -194,5 +194,17 @@ BOOST_AUTO_TEST_SUITE(combinators)
     BOOST_TEST(std::string(keyword_s.begin(), keyword_s.end()) == " ()");
   }
 
+  BOOST_AUTO_TEST_CASE(option) {
+    auto const p = cbx::between(cbx::token('('), cbx::token(')'),
+                                cbx::option(cbx::digit()));
+    auto src = std::string{"()"};
+    auto s = cbx::range_stream(src);
+    BOOST_ASSERT(parse(p, s).unwrap() == boost::none);
+
+    auto src2 = std::string{"(1)"};
+    auto s2 = cbx::range_stream(src2);
+    BOOST_TEST(*(parse(p, s2).unwrap()) == '1');
+  }
+
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
