@@ -178,5 +178,21 @@ BOOST_AUTO_TEST_SUITE(combinators)
     BOOST_TEST(std::string(s.begin(), s.end()) == "a");
   }
 
+  BOOST_AUTO_TEST_CASE(not_followed_by) {
+    auto non_keyword = std::string{"keywords"};
+    auto non_keyword_s = cbx::range_stream(non_keyword);
+    auto keyword = std::string{"keyword ()"};
+    auto keyword_s = cbx::range_stream(keyword);
+
+    auto const p = cbx::not_followed_by(cbx::string("keyword"), cbx::alpha());
+
+    BOOST_TEST(parse(p, non_keyword_s).is_error());
+    BOOST_TEST(std::string(non_keyword_s.begin(), non_keyword_s.end()) ==
+               "keywords");
+
+    BOOST_TEST(parse(p, keyword_s).unwrap() == "keyword");
+    BOOST_TEST(std::string(keyword_s.begin(), keyword_s.end()) == " ()");
+  }
+
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
