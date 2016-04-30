@@ -206,5 +206,20 @@ BOOST_AUTO_TEST_SUITE(combinators)
     BOOST_TEST(*(parse(p, s2).unwrap()) == '1');
   }
 
+  BOOST_AUTO_TEST_CASE(but_not) {
+    auto const p = cbx::but_not(cbx::many1(cbx::alpha()), cbx::string("key"));
+
+    auto src = std::string{"key"};
+    auto s = cbx::range_stream(src);
+    BOOST_TEST(parse(p, s).is_error());
+    BOOST_TEST(std::string(s.begin(), s.end()) == "key");
+
+    auto src2 = std::string{"abc"};
+    auto s2 = cbx::range_stream(src2);
+    auto res = parse(p, s2);
+    BOOST_TEST(res.is_ok());
+    BOOST_TEST(std::string(res.unwrap().begin(), res.unwrap().end()) == "abc");
+  }
+
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

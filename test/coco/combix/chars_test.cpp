@@ -36,6 +36,10 @@ BOOST_AUTO_TEST_SUITE(combinators)
     auto const p = cbx::string("string");
 
     BOOST_TEST(parse(p, s).unwrap() == "string");
+
+    auto const src2 = std::string{"abc"};
+    auto s2 = cbx::range_stream(src2);
+    BOOST_TEST(parse(p, s2).is_error());
   }
 
   BOOST_AUTO_TEST_CASE(spaces) {

@@ -25,6 +25,11 @@ namespace coco {
             if (c == *chr) {
               res += *chr;
               continue;
+            } else {
+              restore(s, std::move(saved));
+              return parse_error<typename stream_traits<Stream>::value_type>(
+                  error_info<typename stream_traits<Stream>::value_type>(*chr),
+                  expected_info<Stream>());
             }
           }
           restore(s, std::move(saved));
