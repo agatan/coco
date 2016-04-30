@@ -164,5 +164,19 @@ BOOST_AUTO_TEST_SUITE(combinators)
     BOOST_TEST((parse(p, s).unwrap() == std::list<char>{'1', '2', '3'}));
   }
 
+  BOOST_AUTO_TEST_CASE(try_) {
+    auto src = std::string{"1a"};
+    auto s = cbx::range_stream(src);
+
+    auto const p = cbx::seq(cbx::digit(), cbx::digit());
+    auto const try_p = cbx::try_(p);
+
+    BOOST_TEST(parse(try_p, s).is_error());
+    BOOST_TEST(std::string(s.begin(), s.end()) == "1a");
+
+    BOOST_TEST(parse(p, s).is_error());
+    BOOST_TEST(std::string(s.begin(), s.end()) == "a");
+  }
+
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
