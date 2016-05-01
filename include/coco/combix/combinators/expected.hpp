@@ -26,7 +26,6 @@ namespace coco {
         if (res) {
           return res;
         }
-        res.unwrap_error().set_expected(msg);
         return res.unwrap_error();
       }
 
@@ -45,6 +44,7 @@ namespace coco {
                                    }
                                  });
         err.errors().erase(it, err.errors().end());
+        err.add_error(make_expected<Stream>(msg));
       }
 
     private:
