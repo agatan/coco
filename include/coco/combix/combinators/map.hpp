@@ -19,7 +19,7 @@ namespace coco {
 
       template <typename Stream>
       parse_result<result_type<Stream>, Stream> parse(Stream& s) const {
-        return p.parse(s).map(f);
+        return coco::combix::parse(p, s).map(f);
       }
 
       template <typename Stream>

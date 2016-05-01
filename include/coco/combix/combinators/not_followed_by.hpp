@@ -20,7 +20,7 @@ namespace coco {
       parse_result<unused, Stream>
       parse(Stream& s) const {
         auto saved = save(s);
-        auto res = parser.parse(s);
+        auto res = coco::combix::parse(parser, s);
         restore(s, std::move(saved));
         if (res) {
           std::stringstream ss;

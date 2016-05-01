@@ -43,7 +43,7 @@ namespace coco {
 
       template <typename Stream>
       parse_result<result_type<Stream>, Stream> parse(Stream& s) const {
-        return p.parse(s).map([](auto&& r) {
+        return coco::combix::parse(p, s).map([](auto&& r) {
           return std::make_tuple(std::forward<decltype(r)>(r));
         });
       }
@@ -71,7 +71,7 @@ namespace coco {
 
       template <typename Stream>
       parse_result<result_type<Stream>, Stream> parse(Stream& s) const {
-        auto res = p.parse(s);
+        auto res = coco::combix::parse(p, s);
         if (!res) {
           return res.unwrap_error();
         }

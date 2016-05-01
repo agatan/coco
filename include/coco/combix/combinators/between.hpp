@@ -20,15 +20,15 @@ namespace coco {
       template <typename Stream>
       parse_result<parse_result_of_t<Parser, Stream>, Stream> parse(
           Stream& s) const {
-        auto op = open.parse(s);
+        auto op = coco::combix::parse(open, s);
         if (!op) {
           return {op.unwrap_error()};
         }
-        auto res = parser.parse(s);
+        auto res = coco::combix::parse(parser, s);
         if (!res) {
           return res;
         }
-        auto cl = close.parse(s);
+        auto cl = coco::combix::parse(close, s);
         if (!cl) {
           return {cl.unwrap_error()};
         }

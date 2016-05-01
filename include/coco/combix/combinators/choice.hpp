@@ -20,7 +20,7 @@ namespace coco {
       template <typename Stream>
       parse_result<parse_result_of_t<P, Stream>, Stream>
       parse(Stream& s) const {
-        return p.parse(s);
+        return coco::combix::parse(p, s);
       }
 
       template <typename Stream>
@@ -46,7 +46,7 @@ namespace coco {
           parse_result<parse_result_of_t<Head, Stream>,
                        Stream>>::type
       parse(Stream& s) const {
-        auto res = p.parse(s);
+        auto res = coco::combix::parse(p, s);
         if (res) {
           return res;
         } else if (res.unwrap_error().consumed()) {

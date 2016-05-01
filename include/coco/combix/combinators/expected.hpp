@@ -22,7 +22,7 @@ namespace coco {
       template <typename Stream>
       parse_result<parse_result_of_t<P, Stream>, Stream>
       parse(Stream& s) const {
-        auto res = parser.parse(s);
+        auto res = coco::combix::parse(parser, s);
         if (res) {
           return res;
         }

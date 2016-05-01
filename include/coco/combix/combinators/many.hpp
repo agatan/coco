@@ -21,7 +21,8 @@ namespace coco {
       parse_result<std::deque<parse_result_of_t<P, Stream>>, Stream>
       parse(Stream& s) const {
         std::deque<parse_result_of_t<P, Stream>> result;
-        for (auto r = parser.parse(s); r; r = parser.parse(s)) {
+        for (auto r = coco::combix::parse(parser, s); r;
+             r = coco::combix::parse(parser, s)) {
           result.push_back(*r);
         }
         return result;
@@ -48,11 +49,11 @@ namespace coco {
       template <typename Stream>
       parse_result<std::deque<parse_result_of_t<P, Stream>>, Stream>
       parse(Stream& s) const {
-        auto res = parser.parse(s);
+        auto res = coco::combix::parse(parser, s);
         if (!res) {
           return {res.unwrap_error()};
         }
-        auto tail = many(parser).parse(s);
+        auto tail = coco::combix::parse(many(parser), s);
         if (!tail) {
           return tail;
         }

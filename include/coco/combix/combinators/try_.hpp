@@ -19,7 +19,7 @@ namespace coco {
       parse_result<parse_result_of_t<P, Stream>, Stream>
       parse(Stream& s) const {
         auto saved = save(s);
-        auto res = parser.parse(s);
+        auto res = coco::combix::parse(parser, s);
         if (!res) {
           restore(s, std::move(saved));
           res.unwrap_error().consumed(false);

@@ -20,9 +20,9 @@ namespace coco {
       template <typename Stream>
       parse_result<parse_result_of_t<P, Stream>, Stream> parse(
           Stream& s) const {
-        return map(seq(parser, skipper),
-                   [](auto&& t) { return std::get<0>(t); })
-            .parse(s);
+        return coco::combix::parse(
+            map(seq(parser, skipper), [](auto&& t) { return std::get<0>(t); }),
+            s);
       }
 
       template <typename Stream>

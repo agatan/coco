@@ -26,13 +26,13 @@ namespace coco {
                                           std::declval<result_type&&>()))>::value,
             "chain operator's return type is wrong");
 
-        auto res = parser.parse(s);
+        auto res = coco::combix::parse(parser, s);
         if (!res) {
           return res.unwrap_error();
         }
         auto lhs = *res;
         for (;;) {
-          auto op_rhs = seq(op_parser, parser).parse(s);
+          auto op_rhs = coco::combix::parse(seq(op_parser, parser), s);
           if (op_rhs) {
             auto&& op = std::get<0>(*op_rhs);
             auto&& rhs = std::get<1>(*op_rhs);

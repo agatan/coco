@@ -22,7 +22,7 @@ namespace coco {
       template <typename Stream>
       parse_result<std::deque<parse_result_of_t<P, Stream>>, Stream>
       parse(Stream& s) const {
-        auto first = parser.parse(s);
+        auto first = coco::combix::parse(parser, s);
         if (!first) {
           if (first.unwrap_error().consumed()) {
             return first.unwrap_error();
@@ -32,7 +32,7 @@ namespace coco {
         auto tail_parser = many(map(seq(sep, parser), [](auto&& v) {
           return std::get<1>(std::forward<decltype(v)>(v));
         }));
-        auto tail = tail_parser.parse(s);
+        auto tail = coco::combix::parse(tail_parser, s);
         if (!tail) {
           if (tail.unwrap_error().consumed()) {
             return tail.unwrap_error();
