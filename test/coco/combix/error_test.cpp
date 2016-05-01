@@ -41,5 +41,17 @@ BOOST_AUTO_TEST_SUITE(combinators)
     BOOST_TEST(ss.str() == "Unexpected \"c\"\nExpected digit\n");
   }
 
+  BOOST_AUTO_TEST_CASE(expected) {
+    auto const src = std::string{"1"};
+    auto s = cbx::range_stream(src);
+    auto const p = cbx::expected(cbx::alpha(), "letter");
+
+    auto res = parse(p, s);
+    BOOST_TEST(res.is_error());
+    std::stringstream ss;
+    ss << res.unwrap_error();
+    BOOST_TEST(ss.str() == "Unexpected \"1\"\nExpected letter\n");
+  }
+
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

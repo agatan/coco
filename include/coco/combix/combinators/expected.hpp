@@ -26,6 +26,7 @@ namespace coco {
         if (res) {
           return res;
         }
+        res.unwrap_error().set_expected(msg);
         return res.unwrap_error();
       }
 
