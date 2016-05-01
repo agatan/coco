@@ -35,15 +35,9 @@ namespace coco {
         end_ = std::move(saved.end_);
       }
 
-      coco::expected<value_type, parse_error<value_type>> peek() {
+      coco::expected<value_type, parse_error<iterator_stream>> uncons() {
         if (begin_ == end_) {
-          return end_of_input<value_type>();
-        }
-        return *begin_;
-      }
-      coco::expected<value_type, parse_error<value_type>> uncons() {
-        if (begin_ == end_) {
-          return end_of_input<value_type>();
+          return end_of_input<iterator_stream>();
         }
         return *begin_++;
       }

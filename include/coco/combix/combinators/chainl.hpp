@@ -5,6 +5,7 @@
 
 #include <coco/combix/parser_traits.hpp>
 #include <coco/combix/parse_result.hpp>
+#include <coco/combix/combinators/seq.hpp>
 
 namespace coco {
   namespace combix {
@@ -15,7 +16,7 @@ namespace coco {
 
 
       template <typename Stream>
-      parse_result<parse_result_of_t<P, Stream>, Stream> operator()(
+      parse_result<parse_result_of_t<P, Stream>, Stream> parse(
           Stream& s) const {
         using result_type = parse_result_of_t<P, Stream>;
         using op_result_type = parse_result_of_t<Op, Stream>;
@@ -25,34 +26,28 @@ namespace coco {
                                           std::declval<result_type&&>()))>::value,
             "chain operator's return type is wrong");
 
-        auto res = parse(parser, s);
+        auto res = parser.parse(s);
         if (!res) {
-          res.unwrap_error().set_expected(expected_info<Stream>());
           return res.unwrap_error();
         }
         auto lhs = *res;
-        auto op = parse(op_parser, s);
-        while (op.is_ok()) {
-          auto rhs = parse(parser, s);
-          if (!rhs) {
-            rhs.unwrap_error().set_expected(expected_info<Stream>());
-            return rhs;
+        for (;;) {
+          auto op_rhs = seq(op_parser, parser).parse(s);
+          if (op_rhs) {
+            auto&& op = std::get<0>(*op_rhs);
+            auto&& rhs = std::get<1>(*op_rhs);
+            lhs = op(std::move(lhs), std::move(rhs));
+          } else if (op_rhs.unwrap_error().consumed()) {
+            return op_rhs.unwrap_error();
+          } else {
+            return lhs;
           }
-          auto tmp = op.unwrap()(std::move(lhs), std::move(*rhs));
-          lhs = std::move(tmp);
-          op = parse(op_parser, s);
         }
-        return {lhs};
       }
 
-      template <typename S>
-      expected_list<typename stream_traits<S>::value_type> expected_info()
-          const {
-        auto current = parser_traits<P, S>::expected_info(parser);
-        if (current.nullable()) {
-          current.merge(parser_traits<Op, S>::expected_info(op_parser));
-        }
-        return current;
+      template <typename Stream>
+      void add_error(parse_error<Stream>& err) const {
+        parser.add_error(err);
       }
 
     private:

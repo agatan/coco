@@ -31,25 +31,22 @@ namespace coco {
 
       ~parser() = default;
 
-      parse_result<Result, Stream> operator()(Stream& s) const {
-        return (*holder_)(s);
+      parse_result<Result, Stream> parse(Stream& s) const {
+        return holder_->parse(s);
       }
 
       template <typename S>
-      typename std::enable_if<
-          std::is_same<S, Stream>::value,
-          expected_list<typename stream_traits<Stream>::value_type>>::type
-      expected_info() const {
-        return holder_->expected_info();
+      typename std::enable_if<std::is_same<S, Stream>::value, void>::type
+      add_error(parse_error<S>& err) const {
+        return holder_->add_error(err);
       }
 
      private:
       struct holder_base {
         virtual ~holder_base() = default;
 
-        virtual parse_result<Result, Stream> operator()(Stream&) const = 0;
-        virtual expected_list<typename stream_traits<Stream>::value_type>
-        expected_info() const = 0;
+        virtual parse_result<Result, Stream> parse(Stream&) const = 0;
+        virtual void add_error(parse_error<Stream>&) const = 0;
 
         virtual std::unique_ptr<holder_base> copy() const = 0;
       };
@@ -61,13 +58,12 @@ namespace coco {
 
         ~holder() = default;
 
-        parse_result<Result, Stream> operator()(Stream& s) const override {
-          return parser_traits<P, Stream>::parse(parser, s);
+        parse_result<Result, Stream> parse(Stream& s) const override {
+          return parser.parse(s);
         }
 
-        expected_list<typename stream_traits<Stream>::value_type>
-        expected_info() const override {
-          return parser_traits<P, Stream>::expected_info(parser);
+        void add_error(parse_error<Stream>& err) const override {
+          return parser.template add_error<Stream>(err);
         }
 
         std::unique_ptr<holder_base> copy() const override {

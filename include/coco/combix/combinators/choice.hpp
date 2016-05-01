@@ -19,14 +19,13 @@ namespace coco {
 
       template <typename Stream>
       parse_result<parse_result_of_t<P, Stream>, Stream>
-      operator()(Stream& s) const {
-        return parse(p, s);
+      parse(Stream& s) const {
+        return p.parse(s);
       }
 
-      template <typename S>
-      expected_list<typename stream_traits<S>::value_type> expected_info()
-          const {
-        return parser_traits<P, S>::expected_info(p);
+      template <typename Stream>
+      void add_error(parse_error<Stream>& err) const {
+        p.add_error(err);
       }
 
      private:
@@ -46,26 +45,25 @@ namespace coco {
                        parse_result_of_t<base_type, Stream>>::value,
           parse_result<parse_result_of_t<Head, Stream>,
                        Stream>>::type
-      operator()(Stream& s) const {
-        auto res = parse(p, s);
+      parse(Stream& s) const {
+        auto res = p.parse(s);
         if (res) {
           return res;
+        } else if (res.unwrap_error().consumed()) {
+          return res.unwrap_error();
         }
-        res = base_type::operator()(s);
-        if (res) {
-          return res;
+        auto tail_res = base_type::parse(s);
+        if (tail_res) {
+          return tail_res;
         }
-        res.unwrap_error().set_expected(expected_info<Stream>());
+        res.unwrap_error().merge(std::move(tail_res.unwrap_error()));
         return res.unwrap_error();
       }
 
-      template <typename S>
-      expected_list<typename stream_traits<S>::value_type> expected_info()
-          const {
-        auto base = base_type::template expected_info<S>();
-        auto info = parser_traits<Head, S>::expected_info(p);
-        info.merge(base);
-        return info;
+      template <typename Stream>
+      void add_error(parse_error<Stream>& err) const {
+        p.add_error(err);
+        base_type::add_error(err);
       }
 
      private:

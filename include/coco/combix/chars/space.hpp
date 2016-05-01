@@ -12,26 +12,7 @@
 namespace coco {
   namespace combix {
 
-    struct space_parser {
-      template <typename Stream>
-      parse_result<unused, Stream> operator()(Stream& s) const {
-        auto res = parse(expected(satisfy([](auto c) { return std::isspace(c); }),
-                              "whitespace"),
-                     s);
-        if (res) {
-          return unused();
-        } else {
-          return res.unwrap_error();
-        }
-      }
-
-      template <typename Stream>
-      expected_list<typename stream_traits<Stream>::value_type> expected_info()
-          const {
-        return expected_list<typename stream_traits<Stream>::value_type>(
-            "whitespace");
-      }
-    };
+    using space_parser = expected_parser<satisfy_parser<bool(*)(char)>>;
 
     space_parser space();
 

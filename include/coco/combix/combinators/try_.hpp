@@ -17,20 +17,20 @@ namespace coco {
 
       template <typename Stream>
       parse_result<parse_result_of_t<P, Stream>, Stream>
-      operator()(Stream& s) const {
+      parse(Stream& s) const {
         auto saved = save(s);
-        auto res = parse(parser, s);
+        auto res = parser.parse(s);
         if (!res) {
           restore(s, std::move(saved));
+          res.unwrap_error().consumed(false);
           return res.unwrap_error();
         }
         return res.unwrap();
       }
 
       template <typename Stream>
-      expected_list<typename stream_traits<Stream>::value_type> expected_info()
-          const {
-        return coco::combix::expected_info<Stream>(parser);
+      void add_error(parse_error<Stream>& err) const {
+        parser.add_error(err);
       }
 
     private:

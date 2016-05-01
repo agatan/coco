@@ -1,34 +1,19 @@
 #ifndef COCO_COMBIX_CHARS_DIGIT_HPP_
 #define COCO_COMBIX_CHARS_DIGIT_HPP_
 
+#include <cctype>
+#include <type_traits>
+
 #include <coco/combix/primitives.hpp>
 #include <coco/combix/parse_result.hpp>
 #include <coco/combix/parser_traits.hpp>
 #include <coco/combix/combinators/expected.hpp>
+#include <coco/combix/primitives.hpp>
 
 namespace coco {
   namespace combix {
 
-    struct digit_parser {
-      template <typename Stream>
-      parse_result<char, Stream> operator()(Stream& s) const {
-        auto res =
-            parse(expected(satisfy([](auto c) { return '0' <= c && c <= '9'; }),
-                           "digit"),
-                  s);
-        if (!res) {
-          return res.unwrap_error();
-        }
-        return res.unwrap();
-      }
-
-      template <typename S>
-      expected_list<typename stream_traits<S>::value_type> expected_info()
-          const {
-        return expected_list<typename stream_traits<S>::value_type>(
-            std::string{"digit"});
-      }
-    };
+    using digit_parser = expected_parser<satisfy_parser<bool(*)(char)>>;
 
     digit_parser digit();
 

@@ -42,16 +42,15 @@ namespace coco {
       seq_parser(P const& p) : p(p) {}
 
       template <typename Stream>
-      parse_result<result_type<Stream>, Stream> operator()(Stream& s) const {
-        return parse(p, s).map([](auto&& r) {
+      parse_result<result_type<Stream>, Stream> parse(Stream& s) const {
+        return p.parse(s).map([](auto&& r) {
           return std::make_tuple(std::forward<decltype(r)>(r));
         });
       }
 
-      template <typename S>
-      expected_list<typename stream_traits<S>::value_type> expected_info()
-          const {
-        return parser_traits<P, S>::expected_info(p);
+      template <typename Stream>
+      void add_error(parse_error<Stream>& err) const {
+        p.add_error(err);
       }
 
      private:
@@ -71,27 +70,22 @@ namespace coco {
           : seq_parser<Tail...>(tail...), p(h) {}
 
       template <typename Stream>
-      parse_result<result_type<Stream>, Stream> operator()(Stream& s) const {
-        auto res = parse(p, s);
+      parse_result<result_type<Stream>, Stream> parse(Stream& s) const {
+        auto res = p.parse(s);
         if (!res) {
-          res.unwrap_error().set_expected(expected_info<Stream>());
-          return parse_result<result_type<Stream>, Stream>(res.unwrap_error());
+          return res.unwrap_error();
         }
-        auto tail = base_type::operator()(s);
+        auto tail = base_type::parse(s);
         if (!tail) {
-          return parse_result<result_type<Stream>, Stream>(tail.unwrap_error());
+          tail.unwrap_error().consumed(true);
+          return tail.unwrap_error();
         }
         return detail::add_tuple(*res, *tail);
       }
 
-      template <typename S>
-      expected_list<typename stream_traits<S>::value_type> expected_info()
-          const {
-        auto current = parser_traits<Head, S>::expected_info(p);
-        if (current.nullable()) {
-          current.merge(base_type::template expected_info<S>());
-        }
-        return current;
+      template <typename Stream>
+      void add_error(parse_error<Stream>& err) const {
+        p.add_error(err);
       }
 
     private:

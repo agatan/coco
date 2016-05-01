@@ -4,7 +4,11 @@
 #include <coco/combix/combinators.hpp>
 #include <coco/combix/iterator_stream.hpp>
 #include <coco/combix/primitives.hpp>
-#include <coco/combix/chars.hpp>
+#include <coco/combix/chars/digit.hpp>
+#include <coco/combix/chars/alpha.hpp>
+#include <coco/combix/chars/string.hpp>
+#include <coco/combix/chars/space.hpp>
+#include <coco/combix/chars/parens.hpp>
 
 #include <boost/test/unit_test.hpp>
 
@@ -45,17 +49,17 @@ BOOST_AUTO_TEST_SUITE(combinators)
   BOOST_AUTO_TEST_CASE(spaces) {
     auto const space = cbx::space();
     auto const spaces = cbx::spaces();
-
+  
     {
       auto const src = std::string("non-space");
       auto s = cbx::range_stream(src);
-
+  
       BOOST_TEST(parse(space, s).is_error());
     }
     {
       auto const src = std::string(" \t\n");
       auto s = cbx::range_stream(src);
-
+  
       BOOST_TEST(parse(spaces, s).is_ok());
     }
   }

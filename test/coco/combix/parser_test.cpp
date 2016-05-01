@@ -21,11 +21,11 @@ BOOST_AUTO_TEST_SUITE(parser)
     auto const p = coco::combix::any();
     auto const wrapped = coco::combix::parser<char, stream_type>(p);
 
-    BOOST_TEST(wrapped(s).unwrap() == 't');
-    BOOST_TEST(wrapped(s).unwrap() == 'e');
-    BOOST_TEST(wrapped(s).unwrap() == 's');
-    BOOST_TEST(wrapped(s).unwrap() == 't');
-    BOOST_TEST(wrapped(s).is_error());
+    BOOST_TEST(parse(wrapped, s).unwrap() == 't');
+    BOOST_TEST(parse(wrapped, s).unwrap() == 'e');
+    BOOST_TEST(parse(wrapped, s).unwrap() == 's');
+    BOOST_TEST(parse(wrapped, s).unwrap() == 't');
+    BOOST_TEST(parse(wrapped, s).is_error());
   }
 
   BOOST_AUTO_TEST_CASE(complicated) {
@@ -40,9 +40,9 @@ BOOST_AUTO_TEST_SUITE(parser)
     auto const choice = coco::combix::parser<char, stream_type>(
         coco::combix::choice(alpha, num));
 
-    BOOST_TEST(choice(s).unwrap() == 'a');
-    BOOST_TEST(choice(s).unwrap() == '1');
-    BOOST_TEST(choice(s).is_error());
+    BOOST_TEST(parse(choice, s).unwrap() == 'a');
+    BOOST_TEST(parse(choice, s).unwrap() == '1');
+    BOOST_TEST(parse(choice, s).is_error());
   }
 
 BOOST_AUTO_TEST_SUITE_END()

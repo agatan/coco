@@ -1,7 +1,7 @@
 #ifndef COCO_COMBIX_COMBINATORS_MANY_HPP_
 #define COCO_COMBIX_COMBINATORS_MANY_HPP_
 
-#include <list>
+#include <deque>
 #include <type_traits>
 
 #include <coco/combix/parse_result.hpp>
@@ -18,21 +18,17 @@ namespace coco {
       ~many_parser() = default;
 
       template <typename Stream>
-      parse_result<std::list<parse_result_of_t<P, Stream>>, Stream>
-      operator()(Stream& s) const {
-        std::list<parse_result_of_t<P, Stream>> result;
-        for (auto r = parse(parser, s); r; r = parse(parser, s)) {
+      parse_result<std::deque<parse_result_of_t<P, Stream>>, Stream>
+      parse(Stream& s) const {
+        std::deque<parse_result_of_t<P, Stream>> result;
+        for (auto r = parser.parse(s); r; r = parser.parse(s)) {
           result.push_back(*r);
         }
         return result;
       }
 
-      template <typename S>
-      expected_list<typename stream_traits<S>::value_type> expected_info() const {
-        auto head = parser_traits<P, S>::expected_info(parser);
-        head.nullable(true);
-        return head;
-      }
+      template <typename Stream>
+      void add_error(parse_error<Stream>&) const { }
     private:
       P parser;
     };
@@ -50,24 +46,23 @@ namespace coco {
       ~many1_parser() = default;
 
       template <typename Stream>
-      parse_result<std::list<parse_result_of_t<P, Stream>>, Stream>
-      operator()(Stream& s) const {
-        auto res = parse(parser, s);
+      parse_result<std::deque<parse_result_of_t<P, Stream>>, Stream>
+      parse(Stream& s) const {
+        auto res = parser.parse(s);
         if (!res) {
-          res.unwrap_error().set_expected(expected_info<Stream>());
           return {res.unwrap_error()};
         }
-        auto tail = parse(many(parser), s);
+        auto tail = many(parser).parse(s);
         if (!tail) {
           return tail;
         }
-        tail.unwrap().push_front(res.unwrap());
+        tail.unwrap().emplace_front(std::move(res.unwrap()));
         return tail;
       }
 
-      template <typename S>
-      expected_list<typename stream_traits<S>::value_type> expected_info() const {
-        return parser_traits<P, S>::expected_info(parser);
+      template <typename Stream>
+      void add_error(parse_error<Stream>& err) const {
+        parser.add_error(err);
       }
 
     private:

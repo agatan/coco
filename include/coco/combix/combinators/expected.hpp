@@ -21,21 +21,31 @@ namespace coco {
 
       template <typename Stream>
       parse_result<parse_result_of_t<P, Stream>, Stream>
-      operator()(Stream& s) const {
-        auto res = parse(parser, s);
+      parse(Stream& s) const {
+        auto res = parser.parse(s);
         if (res) {
           return res;
         }
-        res.unwrap_error().set_expected(expected_info<Stream>());
+        res.unwrap_error().set_expected(msg);
         return res.unwrap_error();
       }
 
       template <typename Stream>
-      expected_list<typename stream_traits<Stream>::value_type> expected_info()
-          const {
-        return expected_list<typename stream_traits<Stream>::value_type>(msg);
+      void add_error(parse_error<Stream>& err) const {
+        auto prev_errs = err.errors().size();
+        parser.add_error(err);
+        std::size_t i = 0;
+        auto it = std::remove_if(err.errors().begin(), err.errors().end(),
+                                 [&](auto const& e) {
+                                   if (i < prev_errs) {
+                                     i++;
+                                     return false;
+                                   } else {
+                                     return e.kind() == error_kind::expected;
+                                   }
+                                 });
+        err.errors().erase(it, err.errors().end());
       }
-
 
     private:
       P parser;

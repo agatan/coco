@@ -24,8 +24,9 @@ BOOST_AUTO_TEST_SUITE(combinators)
         cbx::alpha(), cbx::map(cbx::digit(), [](auto) { return '!'; }));
     auto res = parse(p, s);
     BOOST_TEST(res.is_error());
-    BOOST_TEST(cbx::to_string(res.unwrap_error()) ==
-               R"(unexpected "(": expected alphabet, digit)");
+    std::stringstream ss;
+    ss << res.unwrap_error();
+    BOOST_TEST(ss.str() == "Unexpected \"(\"\nExpected alphabet, digit\n");
   }
 
 BOOST_AUTO_TEST_SUITE_END()

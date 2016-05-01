@@ -4,11 +4,13 @@
 #include <iterator>
 #include <type_traits>
 
-#include <coco/combix/error.hpp>
 #include <coco/expected.hpp>
 
 namespace coco {
   namespace combix {
+
+    template <typename T>
+    struct parse_error;
 
     template <typename T>
     struct stream_traits {
@@ -22,11 +24,7 @@ namespace coco {
         return t.restore(std::move(saved));
       }
 
-      static coco::expected<value_type, parse_error<value_type>> peek(T& t) {
-        return t.peek();
-      }
-
-      static coco::expected<value_type, parse_error<value_type>> uncons(T& t) {
+      static coco::expected<value_type, parse_error<T>> uncons(T& t) {
         return t.uncons();
       }
 
@@ -35,16 +33,12 @@ namespace coco {
       }
     };
 
-    template <typename T>
-    coco::expected<typename stream_traits<T>::value_type,
-                   parse_error<typename stream_traits<T>::value_type>>
-    peek(T& t) {
-      return stream_traits<T>::peek(t);
-    }
+    template <typename Stream>
+    using stream_value_of_t = typename stream_traits<Stream>::value_type;
 
     template <typename T>
     coco::expected<typename stream_traits<T>::value_type,
-                   parse_error<typename stream_traits<T>::value_type>>
+                   parse_error<T>>
     uncons(T& t) {
       return stream_traits<T>::uncons(t);
     }

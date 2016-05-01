@@ -16,33 +16,39 @@ namespace coco {
       explicit string_parser(std::string&& s) : str(std::move(s)) {}
 
       template <typename Stream>
-      parse_result<std::string, Stream> operator()(Stream& s) const {
+      parse_result<std::string, Stream> parse(Stream& s) const {
         auto saved = save(s);
         std::string res;
+        bool consumed = false;
         for (auto c : str) {
           auto chr = uncons(s);
           if (chr) {
             if (c == *chr) {
               res += *chr;
-              continue;
+              consumed = true;
             } else {
               restore(s, std::move(saved));
-              return parse_error<typename stream_traits<Stream>::value_type>(
-                  error_info<typename stream_traits<Stream>::value_type>(*chr),
-                  expected_info<Stream>());
+              if (consumed) {
+                auto err = parse_error<Stream>(make_unexpected<Stream>(*chr));
+                err.add_error(make_expected<Stream>(str));
+                err.consumed(true);
+                return err;
+              } else {
+                return parse_error<Stream>();
+              }
             }
+          } else {
+            restore(s, std::move(saved));
+            chr.unwrap_error().consumed(consumed);
+            return chr.unwrap_error();
           }
-          restore(s, std::move(saved));
-          chr.unwrap_error().set_expected(expected_info<Stream>());
-          return chr.unwrap_error();
         }
         return res;
       }
 
       template <typename Stream>
-      expected_list<typename stream_traits<Stream>::value_type> expected_info()
-          const {
-        return expected_list<typename stream_traits<Stream>::value_type>(str);
+      void add_error(parse_error<Stream>& err) const {
+        err.add_error(make_expected<Stream>(str));
       }
 
     private:

@@ -18,34 +18,26 @@ namespace coco {
             parser(std::forward<P>(p)) {}
 
       template <typename Stream>
-      parse_result<parse_result_of_t<Parser, Stream>, Stream> operator()(
+      parse_result<parse_result_of_t<Parser, Stream>, Stream> parse(
           Stream& s) const {
-        auto op = parse(open, s);
+        auto op = open.parse(s);
         if (!op) {
           return {op.unwrap_error()};
         }
-        auto res = parse(parser, s);
+        auto res = parser.parse(s);
         if (!res) {
           return res;
         }
-        auto cl = parse(close, s);
+        auto cl = close.parse(s);
         if (!cl) {
           return {cl.unwrap_error()};
         }
         return res;
       }
 
-      template <typename S>
-      expected_list<typename stream_traits<S>::value_type> expected_info()
-          const {
-        auto o = parser_traits<Open, S>::expected_info(open);
-        if (o.nullable()) {
-          o.merge(parser_traits<Parser, S>::expected_info(parser));
-        }
-        if (o.nullable()) {
-          o.merge(parser_traits<Close, S>::expected_info(close));
-        }
-        return o;
+      template <typename Stream>
+      void add_error(parse_error<Stream>& err) const {
+        open.add_error(err);
       }
 
      private:

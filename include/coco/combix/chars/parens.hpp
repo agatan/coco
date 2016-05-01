@@ -15,8 +15,13 @@ namespace coco {
 
       template <typename Stream>
       parse_result<parse_result_of_t<P, Stream>, Stream>
-      operator()(Stream& s) const {
+      parse(Stream& s) const {
         return parse(between(token('('), token(')'), parser), s);
+      }
+
+      template <typename Stream>
+      void add_error(parse_error<Stream>& err) const {
+        between(token('('), token(')'), parser).add_error(err);
       }
 
     private:

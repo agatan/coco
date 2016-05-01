@@ -18,14 +18,13 @@ namespace coco {
       map_parser(P const& p, F const& f) : p(p), f(f) {}
 
       template <typename Stream>
-      parse_result<result_type<Stream>, Stream> operator()(Stream& s) const {
-        return parse(p, s).map(f);
+      parse_result<result_type<Stream>, Stream> parse(Stream& s) const {
+        return p.parse(s).map(f);
       }
 
-      template <typename S>
-      expected_list<typename stream_traits<S>::value_type> expected_info()
-          const {
-        return parser_traits<P, S>::expected_info(p);
+      template <typename Stream>
+      void add_error(parse_error<Stream>& err) const {
+        p.add_error(err);
       }
 
     private:

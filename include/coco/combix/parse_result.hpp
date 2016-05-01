@@ -12,7 +12,7 @@ namespace coco {
 
     template <typename T, typename S>
     using parse_result =
-        coco::expected<T, parse_error<typename stream_traits<S>::value_type>>;
+        coco::expected<T, parse_error<S>>;
 
     template <typename>
     struct is_parse_result : std::false_type {};

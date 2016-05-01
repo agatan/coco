@@ -6,64 +6,43 @@
 #include <coco/combix/stream_traits.hpp>
 #include <coco/combix/parser_traits.hpp>
 #include <coco/combix/combinators/try_.hpp>
+#include <coco/combix/unused.hpp>
 
 namespace coco {
   namespace combix {
 
-    template <typename P, typename Not>
+    template <typename P>
     struct not_followed_by_parser {
-      not_followed_by_parser(P const& p, Not const& n)
-          : parser(p), not_followed(n) {}
-      not_followed_by_parser(P&& p, Not&& n)
-          : parser(std::move(p)), not_followed(std::move(n)) {}
+      not_followed_by_parser(P const& p) : parser(p) {}
+      not_followed_by_parser(P&& p) : parser(std::move(p)) {}
 
       template <typename Stream>
-      parse_result<parse_result_of_t<P, Stream>, Stream>
-      operator()(Stream& s) const {
+      parse_result<unused, Stream>
+      parse(Stream& s) const {
         auto saved = save(s);
-        auto res = parse(parser, s);
-        if (!res) {
-          return res.unwrap_error();
-        }
-        auto saved_main = save(s);
-        auto follow = parse(not_followed, s);
-        if (follow) {
-          restore(s, std::move(saved));
-          parse_error<typename stream_traits<Stream>::value_type> err;
-          auto unexpected_list =
-              coco::combix::expected_info<Stream>(not_followed);
+        auto res = parser.parse(s);
+        restore(s, std::move(saved));
+        if (res) {
           std::stringstream ss;
-          for (auto it = std::begin(unexpected_list),
-                    e = std::end(unexpected_list);
-               it != e; ++it) {
-            if (it != std::begin(unexpected_list)) {
-              ss << ", ";
-            }
-            ss << *it;
-          }
-          err.set_unexpected(ss.str());
-          return err;
+          ss << *res;
+          return parse_error<Stream>(make_unexpected<Stream>(ss.str()));
         }
-        restore(s, std::move(saved_main));
-        return res.unwrap();
+        return unused{};
       }
 
       template <typename Stream>
-      expected_list<typename stream_traits<Stream>::value_type> expected_info()
-          const {
-        return coco::combix::expected_info<Stream>(parser);
+      void add_error(parse_error<Stream>&) const {
+        // TODO: unexpected combinator
       }
 
      private:
       P parser;
-      Not not_followed;
     };
 
-    template <typename P, typename Not>
-    not_followed_by_parser<std::decay_t<P>, std::decay_t<Not>>
-    not_followed_by(P&& p, Not&& n) {
-      return not_followed_by_parser<std::decay_t<P>, std::decay_t<Not>>(
-          std::forward<P>(p), std::forward<Not>(n));
+    template <typename P>
+    not_followed_by_parser<std::decay_t<P>>
+    not_followed_by(P&& p) {
+      return not_followed_by_parser<std::decay_t<P>>(std::forward<P>(p));
     }
 
   } // namespace combix

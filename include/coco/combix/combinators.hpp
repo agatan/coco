@@ -14,6 +14,5 @@
 #include <coco/combix/combinators/try_.hpp>
 #include <coco/combix/combinators/not_followed_by.hpp>
 #include <coco/combix/combinators/option.hpp>
-#include <coco/combix/combinators/but_not.hpp>
 
 #endif

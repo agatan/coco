@@ -1,7 +1,7 @@
 #ifndef COCO_COMBIX_COMBINATORS_SEP_BY_HPP_
 #define COCO_COMBIX_COMBINATORS_SEP_BY_HPP_
 
-#include <list>
+#include <deque>
 #include <type_traits>
 
 #include <coco/combix/parse_result.hpp>
@@ -20,30 +20,32 @@ namespace coco {
       sep_by_parser(P&& p, Sep&& s) : parser(std::move(p)), sep(std::move(s)) {}
 
       template <typename Stream>
-      parse_result<std::list<parse_result_of_t<P, Stream>>, Stream>
-      operator()(Stream& s) const {
-        auto first = parse(parser, s);
+      parse_result<std::deque<parse_result_of_t<P, Stream>>, Stream>
+      parse(Stream& s) const {
+        auto first = parser.parse(s);
         if (!first) {
-          return std::list<parse_result_of_t<P, Stream>>{};
+          if (first.unwrap_error().consumed()) {
+            return first.unwrap_error();
+          }
+          return std::deque<parse_result_of_t<P, Stream>>{};
         }
         auto tail_parser = many(map(seq(sep, parser), [](auto&& v) {
           return std::get<1>(std::forward<decltype(v)>(v));
         }));
-        auto tail = parse(tail_parser, s);
+        auto tail = tail_parser.parse(s);
         if (!tail) {
-          return std::list<parse_result_of_t<P, Stream>>{first.unwrap()};
+          if (tail.unwrap_error().consumed()) {
+            return tail.unwrap_error();
+          }
+          return std::deque<parse_result_of_t<P, Stream>>{first.unwrap()};
         }
         (*tail).emplace_front(std::move(first.unwrap()));
         return *tail;
       }
 
-      template <typename S>
-      expected_list<typename stream_traits<S>::value_type> expected_info() const {
-        auto head = parser_traits<P, S>::expected_info(parser);
-        if (head.nullable()) {
-          head.merge(parser_traits<Sep, S>::expected_info(sep));
-        }
-        return head;
+      template <typename Stream>
+      void add_error(parse_error<Stream>& err) const {
+        parser.add_error(err);
       }
 
     private:
