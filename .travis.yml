@@ -1,0 +1,6 @@
+language: cpp
+script:
+  - mkdir build && cd build
+  - cmake .. && make && ctest --output-on-failure
+install:
+  - sudo apt-get -qq install libboost-dev
