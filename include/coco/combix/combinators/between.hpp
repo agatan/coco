@@ -26,10 +26,12 @@ namespace coco {
         }
         auto res = coco::combix::parse(parser, s);
         if (!res) {
+          res.unwrap_error().consumed(true);
           return res;
         }
         auto cl = coco::combix::parse(close, s);
         if (!cl) {
+          cl.unwrap_error().consumed(true);
           return {cl.unwrap_error()};
         }
         return res;

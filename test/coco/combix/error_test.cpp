@@ -72,5 +72,16 @@ BOOST_AUTO_TEST_SUITE(combinators)
     BOOST_TEST(std::string(s.begin(), s.end()) == "b2");
   }
 
+  BOOST_AUTO_TEST_CASE(between_consumed) {
+    auto const p = cbx::between(cbx::token('('), cbx::token(')'), cbx::digit());
+    auto const src = std::string{"(1"};
+    auto s = cbx::range_stream(src);
+
+    auto res = cbx::parse(p, s);
+    BOOST_TEST(res.is_error());
+    BOOST_TEST(res.unwrap_error().consumed());
+    BOOST_TEST(std::string(s.begin(), s.end()) == "");
+  }
+
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
