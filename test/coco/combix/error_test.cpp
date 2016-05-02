@@ -14,6 +14,29 @@
 
 namespace cbx = coco::combix;
 
+using stream_type = cbx::iterator_stream<std::string::const_iterator>;
+
+cbx::parser<std::string, stream_type> reserved() {
+  return cbx::choice(cbx::string("val"), cbx::string("true"),
+                     cbx::string("false"), cbx::string("def"),
+                     cbx::string("return"));
+}
+
+cbx::parser<std::string, stream_type> varname() {
+  auto lead = cbx::choice(cbx::alpha(), cbx::token('_'));
+  auto tail = cbx::map(
+      cbx::many(cbx::choice(cbx::alpha(), cbx::digit(), cbx::token('_'))),
+      [](auto&& cs) { return std::string(cs.begin(), cs.end()); });
+  auto const var = cbx::map(cbx::seq(lead, tail), [](auto&& s) {
+    return std::get<0>(std::forward<decltype(s)>(s)) +
+           std::get<1>(std::forward<decltype(s)>(s));
+  });
+  return cbx::expected(
+      cbx::map(cbx::seq(cbx::not_followed_by(reserved()), var),
+               [](auto&& t) { return std::get<1>(std::move(t)); }),
+      "identifier");
+}
+
 BOOST_AUTO_TEST_SUITE(combix)
 BOOST_AUTO_TEST_SUITE(combinators)
 
@@ -81,6 +104,56 @@ BOOST_AUTO_TEST_SUITE(combinators)
     BOOST_TEST(res.is_error());
     BOOST_TEST(res.unwrap_error().consumed());
     BOOST_TEST(std::string(s.begin(), s.end()) == "");
+  }
+
+  BOOST_AUTO_TEST_CASE(not_followed_by) {
+    auto const inner = cbx::skip_seq(cbx::spaces())(varname(), cbx::token(':'));
+    auto const p = cbx::sep_by(inner, cbx::skip(cbx::token(','), cbx::spaces()));
+
+    {
+      auto const src = std::string{"hoge:"};
+      auto s = cbx::range_stream(src);
+      auto res = cbx::parse(p, s);
+      BOOST_TEST(res.is_ok());
+    }
+    {
+      auto const src = std::string{"hoge"};
+      auto s = cbx::range_stream(src);
+      auto res = cbx::parse(p, s);
+      BOOST_TEST(res.is_error());
+      BOOST_TEST(res.unwrap_error().consumed());
+    }
+    {
+      auto const src = std::string{""};
+      auto s = cbx::range_stream(src);
+      auto res = cbx::parse(p, s);
+      BOOST_TEST(res.is_ok());
+    }
+  }
+
+  BOOST_AUTO_TEST_CASE(sep_by) {
+    auto const inner = cbx::skip_seq(cbx::spaces())(
+        cbx::digit(), cbx::token(':'), cbx::alpha());
+    auto const sep = cbx::sep_by(inner, cbx::token(','));
+
+    {
+      auto const src = std::string{"1:a,2:b"};
+      auto s = cbx::range_stream(src);
+
+      BOOST_TEST(parse(sep, s).is_ok());
+    }
+    {
+      auto const src = std::string{"1:a"};
+      auto s = cbx::range_stream(src);
+
+      BOOST_TEST(parse(sep, s).is_ok());
+    }
+    {
+      auto const src = std::string{""};
+      auto s = cbx::range_stream(src);
+
+      BOOST_TEST(parse(sep, s).is_ok());
+    }
   }
 
 BOOST_AUTO_TEST_SUITE_END()

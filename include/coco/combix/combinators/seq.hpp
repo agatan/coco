@@ -71,13 +71,15 @@ namespace coco {
 
       template <typename Stream>
       parse_result<result_type<Stream>, Stream> parse(Stream& s) const {
+        auto saved = save(s);
         auto res = coco::combix::parse(p, s);
         if (!res) {
           return res.unwrap_error();
         }
+        bool consumed = saved.begin() != s.begin();
         auto tail = base_type::parse(s);
         if (!tail) {
-          tail.unwrap_error().consumed(true);
+          tail.unwrap_error().consumed(consumed);
           return tail.unwrap_error();
         }
         return detail::add_tuple(*res, *tail);
