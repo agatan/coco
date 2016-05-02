@@ -21,9 +21,16 @@ namespace coco {
       parse_result<std::deque<parse_result_of_t<P, Stream>>, Stream>
       parse(Stream& s) const {
         std::deque<parse_result_of_t<P, Stream>> result;
-        for (auto r = coco::combix::parse(parser, s); r;
-             r = coco::combix::parse(parser, s)) {
-          result.push_back(*r);
+        for (;;) {
+          auto r = coco::combix::parse(parser, s);
+          if (r) {
+            result.push_back(r.unwrap());
+            continue;
+          }
+          if (r.unwrap_error().consumed()) {
+            return r.unwrap_error();
+          }
+          break;
         }
         return result;
       }

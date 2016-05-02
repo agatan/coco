@@ -190,12 +190,22 @@ BOOST_AUTO_TEST_SUITE(combinators)
     auto src = std::string("1,2,3");
     auto s = cbx::range_stream(src);
   
-  
     auto const digit =
         cbx::satisfy([](auto c) { return '0' <= c && c <= '9'; });
     auto const p = cbx::sep_by(digit, cbx::token(','));
   
     BOOST_TEST((parse(p, s).unwrap() == std::deque<char>{'1', '2', '3'}));
+
+    {
+      auto src = std::string("1,2,3,");
+      auto s = cbx::range_stream(src);
+    
+      auto const digit =
+          cbx::satisfy([](auto c) { return '0' <= c && c <= '9'; });
+      auto const p = cbx::sep_by(digit, cbx::token(','));
+    
+      BOOST_TEST(parse(p, s).is_error());
+    }
   }
   
   BOOST_AUTO_TEST_CASE(try_) {

@@ -53,5 +53,24 @@ BOOST_AUTO_TEST_SUITE(combinators)
     BOOST_TEST(ss.str() == "Unexpected \"1\"\nExpected letter\n");
   }
 
+  BOOST_AUTO_TEST_CASE(consumed) {
+    auto const src = std::string{"1b2"};
+    auto s = cbx::range_stream(src);
+    auto const p = cbx::seq(cbx::digit(), cbx::digit(), cbx::digit());
+
+    auto res = cbx::parse(p, s);
+    BOOST_TEST(res.is_error());
+    BOOST_TEST(res.unwrap_error().consumed());
+    BOOST_TEST(std::string(s.begin(), s.end()) == "b2");
+
+    auto const manyp = cbx::many(p);
+    s = cbx::range_stream(src);
+
+    auto res2 = cbx::parse(manyp, s);
+    BOOST_TEST(res2.is_error());
+    BOOST_TEST(res2.unwrap_error().consumed());
+    BOOST_TEST(std::string(s.begin(), s.end()) == "b2");
+  }
+
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
