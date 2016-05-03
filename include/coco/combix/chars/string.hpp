@@ -27,15 +27,14 @@ namespace coco {
               res += *chr;
               consumed = true;
             } else {
-              restore(s, std::move(saved));
+              parse_error<Stream> err;
               if (consumed) {
-                auto err = parse_error<Stream>(make_unexpected<Stream>(*chr));
+                err = parse_error<Stream>(s, make_unexpected<Stream>(*chr));
                 err.add_error(make_expected<Stream>(str));
                 err.consumed(true);
-                return err;
-              } else {
-                return parse_error<Stream>();
               }
+              restore(s, std::move(saved));
+              return err;
             }
           } else {
             restore(s, std::move(saved));

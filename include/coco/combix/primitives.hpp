@@ -47,8 +47,9 @@ namespace coco {
         if (f(token)) {
           return token;
         }
+        auto err = parse_error<Stream>(s);
         restore(s, std::move(saved));
-        return parse_error<Stream>();
+        return err;
       }
 
       template <typename Stream>
@@ -81,8 +82,9 @@ namespace coco {
         if (t == v) {
           return {t};
         }
+        auto err = parse_error<Stream>(s);
         restore(s, std::move(saved));
-        return parse_error<Stream>();
+        return err;
       }
 
       template <typename Stream>
@@ -105,7 +107,7 @@ namespace coco {
         if (is_eof(s)) {
           return unused();
         }
-        return parse_error<Stream>();
+        return parse_error<Stream>(s);
       }
 
       template <typename Stream>

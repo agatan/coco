@@ -14,6 +14,8 @@
 #include <string>
 
 namespace cbx = coco::combix;
+template <typename>
+class td;
 
 BOOST_AUTO_TEST_SUITE(combix)
 BOOST_AUTO_TEST_SUITE(position)
@@ -39,7 +41,21 @@ BOOST_AUTO_TEST_SUITE(position)
 
     BOOST_TEST(cbx::parse(p, s).is_ok());
     BOOST_TEST(s.position().line == 3);
-    BOOST_TEST(s.position().column == 2);
+    BOOST_TEST(s.position().column == 1);
+  }
+
+  BOOST_AUTO_TEST_CASE(error) {
+    std::string src{"1\n2\na\n2"};
+    auto s = cbx::make_positioned<cbx::source_position>(cbx::range_stream(src));
+
+    auto const p = cbx::sep_by(cbx::digit(), cbx::token('\n'));
+
+    auto res = cbx::parse(p, s);
+
+    BOOST_TEST(res.is_error());
+    auto&& pos = res.unwrap_error().position();
+    BOOST_TEST(pos.line == 3);
+    BOOST_TEST(pos.column == 1);
   }
 
 BOOST_AUTO_TEST_SUITE_END()

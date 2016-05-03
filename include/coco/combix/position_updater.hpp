@@ -15,7 +15,7 @@ namespace coco {
       void operator()(char c, source_position& pos) {
         if (c == '\n') {
           pos.line++;
-          pos.column = 1;
+          pos.column = 0;
         } else {
           pos.column++;
         }

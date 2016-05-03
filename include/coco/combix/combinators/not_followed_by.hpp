@@ -25,7 +25,7 @@ namespace coco {
         if (res) {
           std::stringstream ss;
           ss << *res;
-          return parse_error<Stream>(make_unexpected<Stream>(ss.str()));
+          return parse_error<Stream>(s, make_unexpected<Stream>(ss.str()));
         }
         return unused{};
       }

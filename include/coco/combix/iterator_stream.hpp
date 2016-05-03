@@ -4,6 +4,7 @@
 #include <iterator>
 
 #include <coco/combix/error.hpp>
+#include <coco/combix/parse_error.hpp>
 #include <coco/combix/stream_traits.hpp>
 #include <coco/expected.hpp>
 
@@ -38,7 +39,7 @@ namespace coco {
 
       coco::expected<value_type, parse_error<iterator_stream>> uncons() {
         if (begin_ == end_) {
-          return end_of_input<iterator_stream>();
+          return end_of_input(*this);
         }
         return *begin_++;
       }

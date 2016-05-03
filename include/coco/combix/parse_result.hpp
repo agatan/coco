@@ -4,6 +4,7 @@
 #include <type_traits>
 
 #include <coco/combix/error.hpp>
+#include <coco/combix/parse_error.hpp>
 #include <coco/combix/stream_traits.hpp>
 #include <coco/expected.hpp>
 

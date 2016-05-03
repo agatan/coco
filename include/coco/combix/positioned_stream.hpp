@@ -48,7 +48,7 @@ namespace coco {
           updater_(*res, position_);
           return *res;
         }
-        return end_of_input<positioned_stream>();
+        return end_of_input(*this);
       }
 
       bool is_eof() const {
