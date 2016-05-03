@@ -14,7 +14,6 @@ include_directories(include)
 install(DIRECTORY include/coco DESTINATION include
   FILES_MATCHING PATTERN "*.hpp")
 
-add_subdirectory(src)
 
 find_package(Boost 1.59.0 REQUIRED COMPONENTS system)
 if (!${Boost_FOUND})

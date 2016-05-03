@@ -24,7 +24,9 @@ namespace coco {
       void add_error(parse_error<Stream>&) const {}
     };
 
-    any_parser any();
+    inline any_parser any() {
+      return any_parser{};
+    }
 
     template <typename F>
     struct satisfy_parser {
@@ -112,7 +114,9 @@ namespace coco {
       }
     };
 
-    eof_parser eof();
+    inline eof_parser eof() {
+      return eof_parser{};
+    }
 
   } // namespace combix
 } // namespace coco

@@ -14,9 +14,17 @@ namespace coco {
 
     using space_parser = expected_parser<satisfy_parser<bool(*)(char)>>;
 
-    space_parser space();
+    inline bool isspace(char c) {
+      return static_cast<bool>(std::isspace(c));
+    }
 
-    expected_parser<many_parser<space_parser>> spaces();
+    inline space_parser space() {
+      return expected(satisfy(isspace), "space");
+    }
+
+    inline expected_parser<many_parser<space_parser>> spaces() {
+      return expected(many(space()), "whitespaces");
+    }
 
   } // namespace combix
 } // namespace coco

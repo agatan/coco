@@ -15,7 +15,13 @@ namespace coco {
 
     using digit_parser = expected_parser<satisfy_parser<bool(*)(char)>>;
 
-    digit_parser digit();
+    inline bool isdigit(char c) {
+      return static_cast<bool>(std::isdigit(c));
+    }
+
+    inline digit_parser digit() {
+      return expected(satisfy(isdigit), "digit");
+    }
 
   } // namespace combix
 } // namespace coco

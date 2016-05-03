@@ -15,7 +15,13 @@ namespace coco {
 
     using alpha_parser = expected_parser<satisfy_parser<bool(*)(char)>>;
 
-    alpha_parser alpha();
+    inline bool isalpha(char c) {
+      return static_cast<bool>(std::isalpha(c));
+    }
+
+    inline alpha_parser alpha() {
+      return expected(satisfy(isalpha), "alphabet");
+    }
 
   } // namespace combix
 } // namespace coco
