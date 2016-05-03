@@ -15,6 +15,7 @@ namespace coco {
     template <typename T>
     struct stream_traits {
       using value_type = typename T::value_type;
+      using iterator_type = typename T::iterator_type;
 
       static T save(T const& t) {
         return t.save();

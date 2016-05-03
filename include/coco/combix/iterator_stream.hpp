@@ -13,14 +13,15 @@ namespace coco {
     template <typename Iter>
     struct iterator_stream {
       using value_type = typename std::iterator_traits<Iter>::value_type;
+      using iterator_type = Iter;
 
       iterator_stream(Iter b, Iter e) : begin_(b), end_(e) {}
       ~iterator_stream() = default;
 
-      iterator_stream(iterator_stream const&) = delete;
+      iterator_stream(iterator_stream const&) = default;
       iterator_stream(iterator_stream&&) = default;
 
-      iterator_stream& operator=(iterator_stream const&) = delete;
+      iterator_stream& operator=(iterator_stream const&) = default;
       iterator_stream& operator=(iterator_stream&&) = default;
 
       Iter begin() const { return begin_; }
