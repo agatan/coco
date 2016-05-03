@@ -1,6 +1,0 @@
-language: cpp
-script:
-  - mkdir build && cd build
-  - cmake .. && make && ctest --output-on-failure
-install:
-  - sudo apt-get -qq install libboost1.60-all-dev
