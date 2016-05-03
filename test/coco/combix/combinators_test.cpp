@@ -16,6 +16,7 @@
 #include <coco/combix/combinators/try_.hpp>
 #include <coco/combix/combinators/option.hpp>
 #include <coco/combix/combinators/not_followed_by.hpp>
+#include <coco/combix/combinators/end_by.hpp>
 
 #include <boost/test/unit_test.hpp>
 
@@ -203,6 +204,56 @@ BOOST_AUTO_TEST_SUITE(combinators)
       auto const digit =
           cbx::satisfy([](auto c) { return '0' <= c && c <= '9'; });
       auto const p = cbx::sep_by(digit, cbx::token(','));
+    
+      BOOST_TEST(parse(p, s).is_error());
+    }
+  }
+
+  BOOST_AUTO_TEST_CASE(end_by) {
+    auto const p = cbx::end_by(digit(), cbx::token(','));
+
+    {
+      auto src = std::string("1,2,3,");
+      auto s = cbx::range_stream(src);
+    
+      BOOST_TEST((parse(p, s).unwrap() == std::deque<char>{'1', '2', '3'}));
+    }
+
+    {
+      auto src = std::string("1,2,3");
+      auto s = cbx::range_stream(src);
+    
+      BOOST_TEST(parse(p, s).is_error());
+    }
+
+    {
+      auto src = std::string("");
+      auto s = cbx::range_stream(src);
+    
+      BOOST_TEST((parse(p, s).unwrap() == std::deque<char>{}));
+    }
+  }
+  
+  BOOST_AUTO_TEST_CASE(end_by1) {
+    auto const p = cbx::end_by1(digit(), cbx::token(','));
+
+    {
+      auto src = std::string("1,2,3,");
+      auto s = cbx::range_stream(src);
+    
+      BOOST_TEST((parse(p, s).unwrap() == std::deque<char>{'1', '2', '3'}));
+    }
+
+    {
+      auto src = std::string("1,2,3");
+      auto s = cbx::range_stream(src);
+    
+      BOOST_TEST(parse(p, s).is_error());
+    }
+
+    {
+      auto src = std::string("");
+      auto s = cbx::range_stream(src);
     
       BOOST_TEST(parse(p, s).is_error());
     }
