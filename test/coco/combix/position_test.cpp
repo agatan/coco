@@ -58,5 +58,19 @@ BOOST_AUTO_TEST_SUITE(position)
     BOOST_TEST(pos.column == 1);
   }
 
+  BOOST_AUTO_TEST_CASE(positioned) {
+    std::string src{"(a)"};
+    auto s = cbx::make_positioned<cbx::source_position>(cbx::range_stream(src));
+
+    auto const p = cbx::positioned(
+        cbx::between(cbx::token('('), cbx::token(')'), cbx::alpha()));
+
+    auto res = cbx::parse(p, s);
+    BOOST_TEST(res.is_ok());
+    BOOST_TEST(res.unwrap().second == 'a');
+    BOOST_TEST(res.unwrap().first.line == 1);
+    BOOST_TEST(res.unwrap().first.column == 0);
+  }
+
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
