@@ -48,9 +48,14 @@ assert(result.unwrap_error() == "negative number");
 `coco::combix` is a parser combinator component inspired by [Parsec](https://hackage.haskell.org/package/parsec) and [combine](https://github.com/Marwes/combine).  
 This component is under development.
 
+#### usage
+
+`coco::combix` is undocumented yet... See the `test/` that contains all of `combix` parsers and combinators tests.
+
 #### example
 
-[agatan/coco-combix-demo](https://github.com/agatan/coco-combix-demo) is `coco::combix`'s demo repository, parsing arithmetic expressions and calculating thier values by `coco::combix`.
+[agatan/coco-combix-demo](https://github.com/agatan/coco-combix-demo) is `coco::combix`'s demo repository, parsing arithmetic expressions and calculating thier values by `coco::combix`.  
+[agatan/scomp](https://github.com/agatan/scomp) is a compiler using `coco::combix`.
 
 ## LICENSE
 
