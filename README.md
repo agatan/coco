@@ -1,7 +1,9 @@
-This is my utility library on C++.  
+Parser combinator library for C++.  
 `coco` is just getting started.
 
 ## Install
+
+`coco` depends on boost 1.59.0.
 
 ```
 git clone https://github.com/agatan/coco
@@ -46,11 +48,14 @@ assert(result.unwrap_error() == "negative number");
 ### combix
 
 `coco::combix` is a parser combinator component inspired by [Parsec](https://hackage.haskell.org/package/parsec) and [combine](https://github.com/Marwes/combine).  
+`coco::combix` can be applied to any stream (not only character stream but also byte stream, token stream, etc...)  
 This component is under development.
 
 #### usage
 
+include `<coco/combix.hpp>`.  
 `coco::combix` is undocumented yet... See the `test/` that contains all of `combix` parsers and combinators tests.
+
 
 #### example
 
