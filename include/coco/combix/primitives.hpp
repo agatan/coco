@@ -120,6 +120,23 @@ namespace coco {
       return eof_parser{};
     }
 
+    struct getpos_parser {
+      template <typename Stream,
+                std::enable_if_t<detail::has_position_v<Stream>,
+                                 std::nullptr_t> = nullptr>
+      parse_result<typename Stream::position_type, Stream> parse(
+          Stream& s) const {
+        return s.position();
+      }
+
+      template <typename Stream>
+      void add_error(parse_error<Stream>&) const {}
+    };
+
+    inline getpos_parser getpos() {
+      return getpos_parser{};
+    }
+
   } // namespace combix
 } // namespace coco
 
