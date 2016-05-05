@@ -14,6 +14,8 @@ make
 make install
 ```
 
+Since this library is a header only library, if you don't want to run tests, you can copy the include directory to your own include directory
+
 ## Components
 
 ### expected
